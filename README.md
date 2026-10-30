@@ -166,6 +166,62 @@ The `/ml` directory provides an experimental text classification microservice ba
 
 ---
 
+## 🎯 Accuracy, Match Thresholds & Verified References
+
+Satya Lens enforces rigorous accuracy standards to prevent false positives and eliminate fabricated claims.
+
+### 1. Matching Algorithm & Thresholds
+Local fact-check matching (`backend/src/services/claimMatcher.js`) follows strict mathematical criteria:
+- **Text Normalization**: Strips punctuation (including em/en dashes, quotes, and Hindi danda `।`), collapses multi-spaces, and converts to lowercase across English and Hindi.
+- **Specific Multi-Word Phrases**: Registry entries strictly use multi-word compound phrases (e.g. `"5g towers spread"`, `"apollo moon landing was faked"`, `"star symbol 500 note fake"`) rather than generic isolated words (`covid`, `virus`, `water`, `sun`, `fake`).
+- **Match Scoring**:
+  $$\text{Match Ratio} = \frac{\text{matched distinct phrases}}{\text{total entry phrases}}$$
+  A match requires:
+  - $\text{Match Ratio} \ge 0.60$ (at least 60% of phrases present) **AND**
+  - At least 3 distinct phrase matches (or 2 distinct matches if the registry entry has $\le 3$ phrases).
+- **Debunking Statement Rejection**: The matcher rejects matches if the input text contains debunking terms (`debunked`, `disproves`, `disproved`, `myth`, `false claim`, `fact check`, `busted`, `hoax`, `untrue`, `झूठा`, `गलत दावा`, `अफवाह`) or claim negations (`never happened`, `did not happen`, `was not faked`). News stories debunking a rumor are never falsely flagged as rumors.
+- **Semantic Similarity & NLI**: When the Python machine learning microservice is active, text embeddings compute cosine similarity ($\ge 0.78$) and Natural Language Inference (NLI) drops unrelated matches.
+- **Honest Presentation Rule**: A local registry match is ALWAYS presented as *"Similar claim previously fact-checked"*, NEVER *"this claim"*. Only a live Google Fact Check API match on the exact statement may produce a strong verdict.
+
+### 2. Confidence Evaluation Rules
+Confidence (`backend/src/services/confidence.js`) is calculated systematically:
+- **High Confidence**: Live Fact-Check API match on the same claim OR semantic similarity + NLI agreement on verified records.
+- **Medium Confidence**: Registry phrase match $\ge 0.80$ OR clear writing style signals corroborated by an external model or documented citation.
+- **Low Confidence**: Linguistic writing style signals only, without external fact-check evidence.
+
+### 3. Automated Reference Verification (`scripts/verifyReferences.js`)
+Every entry in `backend/src/data/factChecks.json` is verified against live endpoints:
+```bash
+npm run verify:references
+```
+- Performs live HTTP requests following redirects up to 5 hops.
+- Confirms HTTP 200 OK status and verifies that page title/body content matches claim themes.
+- Marks dead or failing links as `unverified` and fails CI with exit code 1.
+- Only entries with `verificationStatus: "verified"` are used in runtime matching.
+
+### 4. How to Add a Verified Reference
+1. Verify the investigation was published by an established fact-checker (e.g., IFCN signatory, WHO, NASA, RBI, PIB).
+2. Choose 3–5 specific multi-word phrases that uniquely characterize the rumor (avoid single generic words).
+3. Add the entry to `backend/src/data/factChecks.json`:
+   ```json
+   {
+     "id": "fc-unique-slug",
+     "claim": "Summary of the claim.",
+     "phrases": ["specific phrase one", "specific phrase two", "specific phrase three"],
+     "publisher": "Investigating Organization",
+     "rating": "False",
+     "ratingMeaning": "Plain English explanation of why the claim is false.",
+     "url": "https://official-verified-link.org/fact-check",
+     "date": "YYYY-MM-DD",
+     "language": "en",
+     "verifiedOn": "YYYY-MM-DD",
+     "verificationStatus": "verified"
+   }
+   ```
+4. Run `node scripts/verifyReferences.js` and `npm test` to confirm clean verification.
+
+---
+
 ## 🛡️ Limitations & Privacy
 
 - **Signals, Not Final Proof**: Satya Lens provides signals and educational indicators, not final truth verdicts. Always verify important breaking news and medical or financial claims across multiple authoritative primary sources.

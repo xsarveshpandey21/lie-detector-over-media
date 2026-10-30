@@ -32,7 +32,24 @@ export default function ReasonsList({ reasons }: ReasonsListProps) {
               >
                 {cfg.icon}
               </span>
-              <span className="text-ink dark:text-cream leading-relaxed">{r.text}</span>
+              <div className="text-ink dark:text-cream leading-relaxed">
+                <span>{r.text}</span>
+                {r.refIds && r.refIds.length > 0 && (
+                  <span className="inline-flex gap-1 ml-1.5" aria-label="Reference markers">
+                    {r.refIds.map((refId, i) => (
+                      <a
+                        key={refId}
+                        href={`#ref-${refId}`}
+                        className="inline-flex items-center justify-center px-1.5 py-0.2 rounded text-[11px] font-bold bg-yellow-200/90 dark:bg-yellow-900/70 text-brown-950 dark:text-yellow-200 hover:underline border border-yellow-400/40"
+                        title={`Jump to reference evidence ${refId}`}
+                        aria-label={`Jump to reference evidence ${refId}`}
+                      >
+                        [{i + 1}]
+                      </a>
+                    ))}
+                  </span>
+                )}
+              </div>
             </li>
           );
         })}
@@ -40,4 +57,3 @@ export default function ReasonsList({ reasons }: ReasonsListProps) {
     </div>
   );
 }
-

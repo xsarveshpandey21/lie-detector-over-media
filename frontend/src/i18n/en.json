@@ -54,7 +54,10 @@
     "confidence": "How sure are we?",
     "score": "Authenticity Score",
     "reasons": "Why we think this",
-    "sources": "What other sources say",
+    "sources": "References & Evidence",
+    "references": "References & Evidence",
+    "matchDetails": "How well does it match?",
+    "mediaMetadata": "What we read from your file/link",
     "nextSteps": "What you can do next",
     "checks": "How we checked",
     "technical": "Technical details"
@@ -72,8 +75,8 @@
     "tooltip": "This shows how strong our evidence is, not whether the content is true."
   },
   "sourcesEmpty": {
-    "notChecked": "Fact-check search is turned off in this version (no Google Fact Check API key configured).",
-    "noMatches": "We did not find any published fact-checks for this claim. That does not mean it is true."
+    "notChecked": "Fact-check search is not set up in this version.",
+    "noMatches": "We did not find a published fact-check for this. That does not mean it is true or false."
   },
   "disclaimer": "Satya Lens gives signals, not final proof. Always check with trusted sources.",
   "privacyNote": "We do not store what you check. Files are held in memory during analysis and never saved to disk.",

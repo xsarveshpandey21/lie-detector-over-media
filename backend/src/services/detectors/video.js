@@ -130,7 +130,28 @@ module.exports = async function detectVideo(file) {
       score,
       confidenceLevel
     },
+    confidence: {
+      level: confidenceLevel,
+      score: 55,
+      reason: 'Low because this evaluation is based on container header validation without deepframe neural model inspection.'
+    },
     reasons,
+    matches: [],
+    references: [
+      {
+        id: 'ref-video-container',
+        publisher: 'Satya Lens Video Container Inspector',
+        title: `Video Stream Validation: ${fileName}`,
+        rating: 'Valid Video Container',
+        ratingMeaning: `Verified video stream atoms for ${container} container.`,
+        claim: fileName,
+        url: '',
+        date: new Date().toISOString().split('T')[0],
+        language: 'en',
+        source: 'metadata_inspection',
+        retrievedAt: new Date().toISOString()
+      }
+    ],
     sources: {
       status: 'not_checked',
       items: []

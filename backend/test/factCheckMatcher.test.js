@@ -31,7 +31,7 @@ describe('Local Fact-Check Matching (Strict Matching & Debunking Rejection)', ()
     const text = '5G towers spread covid virus radiation';
     const matches = matchLocalFactChecks(text);
     assert.ok(matches.length >= 1, 'Must match 5G radiation virus rumor');
-    assert.strictEqual(matches[0].publisher, 'Reuters Fact Check');
+    assert.strictEqual(matches[0].publisher, 'World Health Organization');
     assert.strictEqual(matches[0].rating, 'False');
     assert.strictEqual(matches[0].isLocalRegistry, true);
     assert.strictEqual(matches[0].similarityNote, 'Similar claim previously fact-checked');
@@ -41,7 +41,7 @@ describe('Local Fact-Check Matching (Strict Matching & Debunking Rejection)', ()
     const text = 'Apollo moon landing was faked in a Hollywood studio';
     const matches = matchLocalFactChecks(text);
     assert.ok(matches.length >= 1, 'Must match Apollo moon landing faked rumor');
-    assert.strictEqual(matches[0].publisher, 'Reuters Fact Check');
+    assert.strictEqual(matches[0].publisher, 'National Aeronautics and Space Administration (NASA)');
     assert.strictEqual(matches[0].rating, 'False');
     assert.strictEqual(matches[0].isLocalRegistry, true);
   });

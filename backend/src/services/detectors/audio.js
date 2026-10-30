@@ -129,7 +129,28 @@ module.exports = async function detectAudio(file) {
       score,
       confidenceLevel
     },
+    confidence: {
+      level: confidenceLevel,
+      score: 55,
+      reason: 'Low because this evaluation is based on audio container headers and codec analysis without voice biometrics or acoustic synthesis detection.'
+    },
     reasons,
+    matches: [],
+    references: [
+      {
+        id: 'ref-audio-metadata',
+        publisher: 'Satya Lens Audio Stream Inspector',
+        title: `Audio Stream Metadata: ${fileName}`,
+        rating: 'Audio Stream Analyzed',
+        ratingMeaning: `Container ${container || 'standard'} with codec ${codec || 'audio stream'}.`,
+        claim: fileName,
+        url: '',
+        date: new Date().toISOString().split('T')[0],
+        language: 'en',
+        source: 'metadata_inspection',
+        retrievedAt: new Date().toISOString()
+      }
+    ],
     sources: {
       status: 'not_checked',
       items: []

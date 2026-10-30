@@ -4,9 +4,10 @@ import HelpTooltip from './HelpTooltip';
 
 interface ConfidenceStepsProps {
   level: ConfidenceLevel;
+  reason?: string;
 }
 
-export default function ConfidenceSteps({ level }: ConfidenceStepsProps) {
+export default function ConfidenceSteps({ level, reason }: ConfidenceStepsProps) {
   const steps: Array<{ id: ConfidenceLevel; label: string; activeIndex: number }> = [
     { id: 'low', label: 'Low', activeIndex: 1 },
     { id: 'medium', label: 'Medium', activeIndex: 2 },
@@ -56,7 +57,13 @@ export default function ConfidenceSteps({ level }: ConfidenceStepsProps) {
           );
         })}
       </div>
+
+      {/* Confidence Reason */}
+      {reason && (
+        <p className="text-xs text-muted dark:text-brown-300 pt-1 leading-relaxed border-t border-line/60 dark:border-brown-800">
+          {reason}
+        </p>
+      )}
     </div>
   );
 }
-

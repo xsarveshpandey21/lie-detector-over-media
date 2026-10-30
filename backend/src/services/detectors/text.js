@@ -3,6 +3,7 @@ const axios = require('axios');
 const { normalizeLabel } = require('../../utils/labels');
 const { AppError } = require('../../utils/errors');
 const { analyzeTextNlp } = require('../nlp/openSourceNlp');
+const { evaluateConfidence } = require('../confidence');
 
 /**
  * Classifies claim using optional local open-source transformer model or cloud microservice
@@ -101,7 +102,6 @@ module.exports = async function detectText(rawText) {
 
   let finalLabel = nlp.label;
   let finalScore = nlp.score;
-  let confidenceLevel = nlp.confidenceLevel;
   let headline = 'Analysis complete';
   let meaning = 'We analyzed writing style, readability, and structural patterns.';
 
@@ -112,19 +112,16 @@ module.exports = async function detectText(rawText) {
       headline = 'Likely false or misleading';
       meaning = 'This statement contains wording and patterns common in unverified claims or misinformation.';
       finalScore = Math.round(30 - (llm.confidence * 20));
-      confidenceLevel = llm.confidence > 0.75 ? 'high' : 'medium';
     } else if (llm.label === 'true') {
       finalLabel = 'likely_true';
       headline = 'Looks reliable';
       meaning = 'This text matches factual reporting style, though specific claims should still be checked against sources.';
       finalScore = Math.round(70 + (llm.confidence * 20));
-      confidenceLevel = llm.confidence > 0.75 ? 'high' : 'medium';
     } else {
       finalLabel = 'uncertain';
       headline = 'Not sure — please check more';
       meaning = 'We could not find enough clear evidence to verify or refute this claim.';
       finalScore = 50;
-      confidenceLevel = 'medium';
     }
   } else {
     // Pure open-source NLP heuristics (local registry never overrides verdict or sets confidence to high)
@@ -140,33 +137,92 @@ module.exports = async function detectText(rawText) {
     }
   }
 
-  // Construct plain-English reasons
+  // Evaluate Confidence assessment rules
+  const confidenceAssessment = evaluateConfidence({
+    matches: matchedFactChecks,
+    nlpMetrics: metrics,
+    externalModel: llm,
+    contentType: 'text'
+  });
+  const confidenceLevel = confidenceAssessment.level;
+
+  // Extract structured matches and references
+  const matches = matchedFactChecks.map(m => ({
+    matchType: m.matchType || 'registry_phrase',
+    matchStrength: m.matchStrength || 80,
+    matchedPhrases: m.matchedPhrases || [],
+    relation: m.relation || 'similar_claim',
+    similarityNote: m.similarityNote || 'Similar claim previously fact-checked',
+    reference: m.reference
+  }));
+
+  const references = matchedFactChecks.map(m => m.reference).filter(Boolean);
+
+  // If text has significant stylistic signals, attach a style pattern reference
+  if (metrics.sensationalHits > 0 || metrics.urgencyHits > 0 || metrics.objectiveHits > 0) {
+    references.push({
+      id: 'ref-style-nlp',
+      publisher: 'Satya Lens Linguistic Engine',
+      title: 'Stylistic & Structural Pattern Analysis',
+      rating: metrics.clickbaitScore >= 0.35 ? 'Sensational Markers Detected' : 'Objective Attribution Markers',
+      ratingMeaning: metrics.clickbaitScore >= 0.35
+        ? 'Identified emotional pressure, sensationalism, or urgent forwarding appeals in the text.'
+        : 'Identified formal institutional citations and balanced journalistic language in the text.',
+      claim: claim.slice(0, 140) + (claim.length > 140 ? '…' : ''),
+      url: '',
+      date: new Date().toISOString().split('T')[0],
+      language: 'en',
+      source: 'style_pattern',
+      retrievedAt: new Date().toISOString()
+    });
+  }
+
+  // Construct plain-English reasons with numbered reference links
   const reasons = [];
 
   // Required transparency reason
   reasons.push({ tone: 'info', text: 'We checked writing style, not facts.' });
 
   if (matchedFactChecks.length > 0) {
+    const topMatch = matchedFactChecks[0];
+    const topRefId = topMatch.referenceId || topMatch.reference?.id;
     reasons.push({
       tone: 'info',
-      text: `Similar claim previously fact-checked: ${matchedFactChecks[0].publisher} reviewed a related claim (Rating: "${matchedFactChecks[0].rating}").`
+      text: `Similar claim previously fact-checked: ${topMatch.publisher} reviewed a related claim (Rating: "${topMatch.rating}").`,
+      refIds: topRefId ? [topRefId] : undefined
     });
   }
 
   if (metrics.sensationalHits > 0) {
-    reasons.push({ tone: 'bad', text: 'Uses shocking words or conspiracy framing to provoke strong emotions.' });
+    reasons.push({
+      tone: 'bad',
+      text: 'Uses shocking words or conspiracy framing to provoke strong emotions.',
+      refIds: references.some(r => r.id === 'ref-style-nlp') ? ['ref-style-nlp'] : undefined
+    });
   }
 
   if (metrics.urgencyHits > 0) {
-    reasons.push({ tone: 'bad', text: 'Pushes you to share or forward quickly before verifying.' });
+    reasons.push({
+      tone: 'bad',
+      text: 'Pushes you to share or forward quickly before verifying.',
+      refIds: references.some(r => r.id === 'ref-style-nlp') ? ['ref-style-nlp'] : undefined
+    });
   }
 
   if (metrics.clickbaitScore >= 0.3) {
-    reasons.push({ tone: 'warn', text: `Clickbait pattern score is high (${Math.round(metrics.clickbaitScore * 100)}%).` });
+    reasons.push({
+      tone: 'warn',
+      text: `Clickbait pattern score is high (${Math.round(metrics.clickbaitScore * 100)}%).`,
+      refIds: references.some(r => r.id === 'ref-style-nlp') ? ['ref-style-nlp'] : undefined
+    });
   }
 
   if (metrics.objectiveHits > 0) {
-    reasons.push({ tone: 'good', text: 'Names credible research institutions, official agencies, or verified publishers.' });
+    reasons.push({
+      tone: 'good',
+      text: 'Names credible research institutions, official agencies, or verified publishers.',
+      refIds: references.some(r => r.id === 'ref-style-nlp') ? ['ref-style-nlp'] : undefined
+    });
   }
 
   if (metrics.readingEase < 40) {
@@ -235,7 +291,10 @@ module.exports = async function detectText(rawText) {
       score: finalScore,
       confidenceLevel
     },
+    confidence: confidenceAssessment,
     reasons,
+    matches,
+    references,
     sources: {
       status: matchedFactChecks.length > 0 ? 'checked' : 'not_checked',
       items: matchedFactChecks.slice(0, 5)
@@ -261,7 +320,7 @@ module.exports = async function detectText(rawText) {
 
     // Deprecated compatibility aliases
     truthScore: finalScore,
-    confidence: confidenceLevel === 'high' ? 0.88 : confidenceLevel === 'medium' ? 0.68 : 0.45,
+    confidence: confidenceAssessment.score / 100,
     label: finalLabel,
     summary: meaning,
     explanations: reasons.map(r => r.text)

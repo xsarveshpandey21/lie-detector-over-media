@@ -1,142 +1,150 @@
 [
   {
-    "claim": "5G mobile networks spread COVID-19 or cause viral infections through electromagnetic radiation.",
+    "id": "fc-who-5g-covid",
+    "claim": "5G mobile networks spread COVID-19 or transmit biological viruses through electromagnetic radiation.",
     "phrases": [
-      "5g towers",
-      "towers spread",
-      "spread covid",
-      "covid virus radiation"
+      "5g towers spread",
+      "towers spread covid",
+      "covid virus radiation",
+      "spread covid virus",
+      "5g mobile networks spread"
     ],
-    "publisher": "Reuters Fact Check",
+    "publisher": "World Health Organization",
     "rating": "False",
-    "url": "https://www.reuters.com/article/uk-factcheck-5g-coronavirus-idUSKBN21P1ER",
-    "date": "2020-04-07",
-    "verifiedOn": "2026-10-30"
+    "ratingMeaning": "False — mobile networks and radio frequencies cannot transmit biological viruses.",
+    "url": "https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public/myth-busters",
+    "date": "2020-04-10",
+    "language": "en",
+    "verifiedOn": "2026-10-30",
+    "verificationStatus": "verified"
   },
   {
-    "claim": "The 1969 Apollo 11 moon landing was faked and filmed in a Hollywood studio.",
+    "id": "fc-nasa-apollo-11",
+    "claim": "The 1969 Apollo 11 moon landing was staged and faked in a Hollywood studio.",
     "phrases": [
-      "apollo moon landing",
+      "apollo moon landing was faked",
       "moon landing was faked",
       "faked in a hollywood studio",
-      "hollywood studio"
+      "apollo moon landing was staged",
+      "moon landing faked in a hollywood"
     ],
-    "publisher": "Reuters Fact Check",
+    "publisher": "National Aeronautics and Space Administration (NASA)",
     "rating": "False",
-    "url": "https://www.reuters.com/article/factcheck-apollo-moon-idUSL1N2O917K",
+    "ratingMeaning": "False — Apollo 11 astronauts landed on the Moon in July 1969, verified by physical lunar samples and independent tracking worldwide.",
+    "url": "https://www.nasa.gov/missions/apollo/apollo-11-mission-overview/",
     "date": "2021-07-20",
-    "verifiedOn": "2026-10-30"
+    "language": "en",
+    "verifiedOn": "2026-10-30",
+    "verificationStatus": "verified"
   },
   {
-    "claim": "COVID-19 vaccines contain microchips that make people magnetic at the injection site.",
-    "phrases": [
-      "vaccine microchip",
-      "microchips in vaccines",
-      "vaccines make you magnetic",
-      "magnetic at the injection site"
-    ],
-    "publisher": "PolitiFact",
-    "rating": "Pants on Fire",
-    "url": "https://www.politifact.com/factchecks/2021/jun/09/tiktok-videos/no-covid-19-vaccines-dont-make-you-magnetic/",
-    "date": "2021-06-09",
-    "verifiedOn": "2026-10-30"
-  },
-  {
+    "id": "fc-who-hot-water-lemon-cure",
     "claim": "Drinking hot lemon water or alkaline water cures cancer and kills all viral infections.",
     "phrases": [
       "drinking hot lemon water",
-      "hot lemon water",
+      "hot lemon water cures",
       "lemon water cures cancer",
-      "alkaline water cures cancer"
+      "cures cancer and kills all viral",
+      "kills all viral infections"
     ],
-    "publisher": "Snopes",
+    "publisher": "World Health Organization",
     "rating": "False",
-    "url": "https://www.snopes.com/fact-check/hot-water-lemon-cure-cancer/",
-    "date": "2019-11-15",
-    "verifiedOn": "2026-10-30"
+    "ratingMeaning": "False — drinking hot water or lemon water does not cure cancer or destroy viral infections.",
+    "url": "https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public/myth-busters",
+    "date": "2020-05-15",
+    "language": "en",
+    "verifiedOn": "2026-10-30",
+    "verificationStatus": "verified"
   },
   {
-    "claim": "NASA confirmed the sun will soon rise from the west due to Earth's magnetic reversal.",
+    "id": "fc-rbi-star-banknotes",
+    "claim": "500 rupee banknotes with a star symbol are fake or illegal tender.",
     "phrases": [
-      "sun will rise from the west",
-      "sun rise from the west",
-      "magnetic reversal sunrise",
-      "sun will soon rise from the west"
+      "500 rupee note star symbol",
+      "star symbol fake currency",
+      "star symbol 500 note fake",
+      "note star symbol fake",
+      "star series banknotes fake"
     ],
-    "publisher": "AFP Fact Check",
+    "publisher": "Reserve Bank of India (RBI)",
     "rating": "False",
-    "url": "https://factcheck.afp.com/nasa-has-not-said-sun-will-rise-west",
-    "date": "2021-01-14",
-    "verifiedOn": "2026-10-30"
+    "ratingMeaning": "False — banknotes with a star symbol in the number panel are official replacement legal tender issued by the RBI.",
+    "url": "https://www.rbi.org.in/Scripts/FAQView.aspx?Id=136",
+    "date": "2023-07-27",
+    "language": "en",
+    "verifiedOn": "2026-10-30",
+    "verificationStatus": "verified"
   },
   {
-    "claim": "You can quickly charge your smartphone battery in 60 seconds by microwaving it.",
-    "phrases": [
-      "charge your smartphone battery in 60 seconds",
-      "microwaving your smartphone",
-      "charge phone by microwaving",
-      "microwave iphone battery"
-    ],
-    "publisher": "Snopes",
-    "rating": "False",
-    "url": "https://www.snopes.com/fact-check/wave-charge-microwave-iphone/",
-    "date": "2014-09-22",
-    "verifiedOn": "2026-10-30"
-  },
-  {
-    "claim": "WhatsApp will start charging money tomorrow unless you forward this message to 20 people.",
-    "phrases": [
-      "whatsapp will start charging money",
-      "whatsapp will become paid tomorrow",
-      "forward this message to 20 people",
-      "activate whatsapp paid service"
-    ],
-    "publisher": "AltNews",
-    "rating": "False",
-    "url": "https://www.altnews.in/fact-check-viral-message-claiming-whatsapp-charge-users/",
-    "date": "2021-05-18",
-    "verifiedOn": "2026-10-30"
-  },
-  {
-    "claim": "India's Chandrayaan-3 successfully landed near the lunar south pole.",
+    "id": "fc-isro-chandrayaan-3",
+    "claim": "India Chandrayaan-3 mission successfully achieved soft landing near the lunar south pole.",
     "phrases": [
       "chandrayaan-3 successfully landed",
+      "chandrayaan-3 soft landing",
       "landed near the lunar south pole",
       "india moon mission chandrayaan-3",
       "lunar south pole landing"
     ],
-    "publisher": "Reuters",
+    "publisher": "Indian Space Research Organisation (ISRO)",
     "rating": "Verified True",
-    "url": "https://www.reuters.com/world/india/india-moon-mission-chandrayaan-3-south-pole-2023-08-23/",
+    "ratingMeaning": "Verified True — Vikram lander successfully achieved soft landing on the lunar surface on August 23, 2023.",
+    "url": "https://www.isro.gov.in/Chandrayaan3.html",
     "date": "2023-08-23",
-    "verifiedOn": "2026-10-30"
+    "language": "en",
+    "verifiedOn": "2026-10-30",
+    "verificationStatus": "verified"
   },
   {
-    "claim": "NASA's James Webb Space Telescope released the deepest infrared image of the distant universe.",
+    "id": "fc-nasa-webb-telescope",
+    "claim": "NASA James Webb Space Telescope released the deepest infrared image of the distant universe.",
     "phrases": [
-      "james webb space telescope",
+      "james webb space telescope deep field",
       "deepest infrared image of the distant universe",
-      "first images from the webb telescope",
+      "first images from the webb space telescope",
       "webb space telescope deep field"
     ],
-    "publisher": "NASA & Associated Press",
+    "publisher": "NASA Science",
     "rating": "Verified True",
+    "ratingMeaning": "Verified True — NASA unveiled Webb First Deep Field showcasing gravitational lensing and distant galaxies.",
     "url": "https://www.nasa.gov/webbfirstimages",
     "date": "2022-07-12",
-    "verifiedOn": "2026-10-30"
+    "language": "en",
+    "verifiedOn": "2026-10-30",
+    "verificationStatus": "verified"
   },
   {
-    "claim": "The World Health Organization officially declared COVID-19 a pandemic on March 11, 2020.",
+    "id": "fc-nasa-apollo-journal",
+    "claim": "Apollo 11 mission photographic and scientific documentation on the lunar surface.",
     "phrases": [
-      "officially declared covid-19 a pandemic",
-      "world health organization declared covid-19",
-      "who declared covid-19 a pandemic on march 11",
-      "who media briefing on covid-19 11 march 2020"
+      "apollo lunar surface journal",
+      "apollo 11 mission transcripts",
+      "lunar surface photographs apollo",
+      "apollo 11 scientific documentation"
     ],
-    "publisher": "World Health Organization",
-    "rating": "Verified True",
-    "url": "https://www.who.int/director-general/speeches/detail/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---11-march-2020",
-    "date": "2020-03-11",
-    "verifiedOn": "2026-10-30"
+    "publisher": "NASA History Division",
+    "rating": "Verified Authentic",
+    "ratingMeaning": "Verified Authentic — complete mission audio transcripts and photographic journals documenting lunar surface operations.",
+    "url": "https://history.nasa.gov/alsj/a11/a11.html",
+    "date": "2021-08-01",
+    "language": "en",
+    "verifiedOn": "2026-10-30",
+    "verificationStatus": "verified"
+  },
+  {
+    "id": "fc-rbi-star-notes-hi",
+    "claim": "स्टार चिन्ह (*) वाले 500 रुपये के नोट नकली या अवैध हैं।",
+    "phrases": [
+      "स्टार चिन्ह वाले 500",
+      "500 नोट नकली",
+      "स्टार वाले 500 नोट नकली"
+    ],
+    "publisher": "Reserve Bank of India (RBI)",
+    "rating": "False",
+    "ratingMeaning": "गलत — स्टार चिन्ह (*) वाले बैंक नोट वैध और आधिकारिक कानूनी मुद्रा हैं।",
+    "url": "https://www.rbi.org.in/Scripts/FAQView.aspx?Id=136",
+    "date": "2023-07-27",
+    "language": "hi",
+    "verifiedOn": "2026-10-30",
+    "verificationStatus": "verified"
   }
 ]

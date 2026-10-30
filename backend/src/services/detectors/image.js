@@ -211,6 +211,34 @@ module.exports = async function detectImage(file) {
     'Check if the picture comes from a verified photographer or reputable news agency.'
   ];
 
+  const references = [
+    {
+      id: 'ref-image-exif',
+      publisher: 'Satya Lens Metadata & Container Inspector',
+      title: `File Metadata: ${fileName}`,
+      rating: cameraMake ? 'Camera Hardware Recorded' : 'Standard Web File',
+      ratingMeaning: cameraMake
+        ? `Hardware metadata found: ${cameraMake} ${cameraModel || ''} with capture timestamp.`
+        : 'EXIF metadata not present, typical of images downloaded from social media or messaging platforms.',
+      claim: fileName,
+      url: '',
+      date: captureDate ? String(captureDate).slice(0, 10) : new Date().toISOString().split('T')[0],
+      language: 'en',
+      source: 'metadata_inspection',
+      retrievedAt: new Date().toISOString()
+    }
+  ];
+
+  const confidenceAssessment = {
+    level: confidenceLevel,
+    score: confidenceLevel === 'high' ? 85 : 55,
+    reason: softwareTag
+      ? `Medium based on detected image manipulation software tags (${softwareTag}).`
+      : cameraMake
+        ? `Medium based on verified camera hardware EXIF tags (${cameraMake}).`
+        : 'Low because this evaluation is based only on basic container headers without external neural detection.'
+  };
+
   return {
     type: 'image',
     input: {
@@ -231,7 +259,10 @@ module.exports = async function detectImage(file) {
       score,
       confidenceLevel
     },
+    confidence: confidenceAssessment,
     reasons,
+    matches: [],
+    references,
     sources: {
       status: 'not_checked',
       items: []

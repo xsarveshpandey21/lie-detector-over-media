@@ -9,7 +9,9 @@ import VerdictBanner from './components/VerdictBanner';
 import ConfidenceSteps from './components/ConfidenceSteps';
 import ScoreBar from './components/ScoreBar';
 import ReasonsList from './components/ReasonsList';
-import FactCheckCards from './components/FactCheckCards';
+import ReferencesSection from './components/ReferencesSection';
+import MatchDetailsCard from './components/MatchDetailsCard';
+import MediaMetadataTable from './components/MediaMetadataTable';
 import NextSteps from './components/NextSteps';
 import ChecksTransparency from './components/ChecksTransparency';
 import TechnicalDetails from './components/TechnicalDetails';
@@ -125,18 +127,30 @@ export default function App() {
 
               {/* 2 & 3. Evidence Strength & Reliability Score Grid */}
               <div className="grid sm:grid-cols-2 gap-4">
-                <ConfidenceSteps level={report.verdict.confidenceLevel} />
+                <ConfidenceSteps level={report.verdict.confidenceLevel} reason={report.confidence?.reason} />
                 <ScoreBar score={report.verdict.score} />
               </div>
+
+              {/* Match Details (only displayed when matches exist) */}
+              {report.matches && report.matches.length > 0 && (
+                <MatchDetailsCard matches={report.matches} userText={report.input.preview} />
+              )}
+
+              {/* What we read from your file / link (Metadata Table) */}
+              <MediaMetadataTable type={report.type} input={report.input} technical={report.technical} />
 
               {/* Notices (if any, e.g. translation notes) */}
               <Notices notices={report.notices} />
 
-              {/* 4. Why we think this (Plain English reasons) */}
+              {/* 4. Why we think this (Plain English reasons with [1] markers) */}
               <ReasonsList reasons={report.reasons} />
 
-              {/* 5. What other sources say (Real Fact-Check Search) */}
-              <FactCheckCards sources={report.sources} />
+              {/* 5. References & Evidence (Replaces legacy sources card) */}
+              <ReferencesSection
+                references={report.references}
+                sources={report.sources}
+                onToast={setToastMessage}
+              />
 
               {/* 6. What you can do next */}
               <NextSteps steps={report.nextSteps} />

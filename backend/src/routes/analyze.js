@@ -9,6 +9,7 @@ const detectUrl = require('../services/detectors/url');
 const { searchFactChecks } = require('../services/crossVerify');
 const { scoreSources } = require('../services/credibility');
 const { translateText, translateReport } = require('../services/translate');
+const { evaluateConfidence } = require('../services/confidence');
 const { AppError } = require('../utils/errors');
 
 const ANALYSIS_TIMEOUT_MS = 25000;
@@ -58,6 +59,19 @@ async function handleAnalysis(req) {
       const sourcesResult = await searchFactChecks(textForAnalysis, userLang);
       result.sources = sourcesResult;
 
+      // Merge matches & references
+      const mergedMatches = [...(sourcesResult.matches || []), ...(result.matches || [])];
+      result.matches = mergedMatches;
+
+      const mergedRefs = [...(sourcesResult.references || []), ...(result.references || [])];
+      // Deduplicate references by ID
+      const seenRefIds = new Set();
+      result.references = mergedRefs.filter(r => {
+        if (!r || !r.id || seenRefIds.has(r.id)) return false;
+        seenRefIds.add(r.id);
+        return true;
+      });
+
       if (sourcesResult.items && sourcesResult.items.length > 0) {
         // ONLY live Google Fact Check API matches may override verdict or set confidenceLevel to 'high'
         if (sourcesResult.source === 'google_api') {
@@ -76,7 +90,23 @@ async function handleAnalysis(req) {
             result.verdict.headline = 'Verified factual claim';
             result.verdict.meaning = `This claim was investigated and verified as factual by ${top.publisher}.`;
           }
+
+          result.confidence = {
+            level: 'high',
+            score: 95,
+            reason: `High because ${top.publisher} published an independent fact-check investigating this exact claim.`
+          };
         }
+      }
+
+      // Re-evaluate confidence if not set
+      if (!result.confidence) {
+        result.confidence = evaluateConfidence({
+          matches: result.matches,
+          nlpMetrics: result.technical || {},
+          externalModel: null,
+          contentType: 'text'
+        });
       }
 
       // Add real fact check note to checks transparency
@@ -156,6 +186,17 @@ async function handleAnalysis(req) {
 
     default:
       throw new AppError(400, 'unsupported_type', `Unsupported content type "${contentType}". Supported types: text, image, video, audio, url.`);
+  }
+
+  // Guarantee consistent response schema for all content types
+  result.matches = result.matches || [];
+  result.references = result.references || [];
+  if (!result.confidence) {
+    result.confidence = evaluateConfidence({
+      matches: result.matches,
+      nlpMetrics: result.technical || {},
+      contentType: result.type
+    });
   }
 
   // If user requested non-English output, translate plain-English fields in one batched call

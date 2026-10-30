@@ -1,5 +1,5 @@
 // Open-source NLP credibility and feature extraction engine
-const { matchLocalFactChecks } = require('../../utils/factCheckMatcher');
+const { matchLocalFactChecks } = require('../claimMatcher');
 
 /**
  * Counts syllables in an English word using vowel cluster heuristics

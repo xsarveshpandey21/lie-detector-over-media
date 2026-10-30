@@ -11,6 +11,7 @@
     "test:frontend": "cd frontend && npm run test",
     "typecheck": "cd frontend && npm run typecheck",
     "lint": "cd frontend && npm run lint",
+    "verify:references": "node scripts/verifyReferences.js",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
