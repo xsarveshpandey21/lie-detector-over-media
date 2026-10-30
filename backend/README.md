@@ -1,4 +1,4 @@
-# TruthLens Backend
+# Satya Lens Backend
 
 Express API that accepts text, images, video, audio, and URLs and returns explainable detection reports.
 

@@ -1,12 +1,12 @@
-# 🔍 TruthLens AI
+# 🔍 Satya Lens
 
 <div align="center">
 
-![TruthLens AI Dashboard](https://github.com/user-attachments/assets/338fbfbf-4be6-4ed9-9db2-b2cd1a06942a)
+![Satya Lens Dashboard](https://github.com/user-attachments/assets/338fbfbf-4be6-4ed9-9db2-b2cd1a06942a)
 
 
 
-**An AI-powered misinformation and fake content detection platform**
+**See what's real. An AI-assisted misinformation and content reliability platform**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org)
@@ -21,7 +21,7 @@
 
 ## 🎯 Overview
 
-TruthLens AI is a comprehensive platform designed to combat misinformation by analyzing and detecting fake or AI-generated content across multiple media types. It combines advanced detection algorithms with educational resources, gamification, and community trust mechanisms.
+Satya Lens is a comprehensive platform designed to combat misinformation by analyzing and evaluating content across multiple media types.
 
 ### 🌟 Key Highlights
 
@@ -75,7 +75,7 @@ Truth Score Breakdown
 ### Monorepo Structure
 
 ```
-truthlens-ai/
+satya-lens/
 ├── 🔧 backend/              # Express.js API server
 │   ├── src/
 │   │   ├── routes/
@@ -155,8 +155,8 @@ npm >= 8.0.0
 #### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/jaiashwinisatish/truthlens-ai.git
-cd truthlens-ai
+git clone https://github.com/satya-lens/satya-lens.git
+cd satya-lens
 ```
 
 #### 2️⃣ Backend Setup
@@ -344,7 +344,7 @@ curl -X POST http://localhost:5000/api/analyze \
 
 ## 🎓 Educational Resources
 
-TruthLens AI includes built-in educational components:
+Satya Lens includes educational components:
 
 - **AI Mentor Tips**: Context-specific advice for each analysis
 - **Side-by-side Comparisons**: Real vs. fake examples
@@ -400,7 +400,7 @@ The `vercel.json` configuration handles routing and backend proxy.
 **Option 2: Heroku**
 ```bash
 cd backend
-heroku create truthlens-api
+heroku create satya-lens-api
 git push heroku main
 ```
 

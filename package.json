@@ -1,7 +1,7 @@
 {
-  "name": "truthlens-ai",
+  "name": "satya-lens",
   "version": "1.0.0",
-  "description": "TruthLens AI - Multimodal misinformation detector platform",
+  "description": "Satya Lens - check if content is reliable",
   "private": true,
   "scripts": {
     "build": "cd frontend && npm install && npm run build",
@@ -18,3 +18,4 @@
     "multer": "^1.4.5-lts.1"
   }
 }
+

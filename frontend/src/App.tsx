@@ -21,8 +21,19 @@ function App() {
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100">
       <div className="max-w-6xl mx-auto p-4">
-        <header className="rounded-xl header-gradient px-4 py-4 flex items-center justify-between shadow">
-          <h1 className="text-2xl font-bold">TruthLens AI</h1>
+        <header className="rounded-xl bg-paper border border-line px-4 py-3 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <svg className="w-8 h-8 shrink-0" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <circle cx="13" cy="13" r="8" stroke="#8B5E3C" strokeWidth="2.75" fill="#FFFDF7" />
+              <path d="M9 10 A 5 5 0 0 1 15 8" stroke="#F6C453" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="14" cy="12" r="1.5" fill="#F6C453" />
+              <line x1="19" y1="19" x2="27" y2="27" stroke="#8B5E3C" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+            <div>
+              <h1 className="text-xl font-bold font-heading text-ink leading-tight">Satya Lens</h1>
+              <p className="text-xs text-muted">See what&apos;s real.</p>
+            </div>
+          </div>
           <ThemeToggle />
         </header>
 

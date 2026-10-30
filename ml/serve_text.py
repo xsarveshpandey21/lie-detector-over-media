@@ -11,7 +11,7 @@ LABELS = ['false','uncertain','true']
 MODEL_DIR = os.environ.get('MODEL_DIR', './artifacts/text-model')
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-app = FastAPI(title='TruthLens Text Model')
+app = FastAPI(title='Satya Lens Text Model')
 
 class PredictIn(BaseModel):
     text: str

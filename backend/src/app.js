@@ -27,7 +27,7 @@ const upload = multer({
 app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
-    name: 'TruthLens AI',
+    name: 'Satya Lens',
     status: 'operational',
     time: new Date().toISOString()
   });
@@ -69,3 +69,4 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
+
