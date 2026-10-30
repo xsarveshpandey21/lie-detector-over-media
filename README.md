@@ -2,472 +2,207 @@
 
 <div align="center">
 
-![Satya Lens Dashboard](https://github.com/user-attachments/assets/338fbfbf-4be6-4ed9-9db2-b2cd1a06942a)
+**"See what's real."**
 
+A simple web tool to help you check whether text, photos, video, audio, or website links are reliable.
 
+[![CI](https://github.com/satya-lens/satya-lens/actions/workflows/ci.yml/badge.svg)](https://github.com/satya-lens/satya-lens/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-8B5E3C.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/Node.js-20%2B-F6C453?logo=node.js&logoColor=black)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-18-222222?logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 
-**See what's real. An AI-assisted misinformation and content reliability platform**
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org)
-[![React](https://img.shields.io/badge/react-18.x-61dafb)](https://reactjs.org)
-[![TypeScript](https://img.shields.io/badge/typescript-5.x-3178c6)](https://www.typescriptlang.org)
-
-[Features](#-features) • [Demo](#-demo) • [Quick Start](#-quick-start) • [API](#-api-reference) • [Architecture](#-architecture) • [Deployment](#-deployment)
+[Features](#-what-works-right-now) • [Quick Start](#-quick-start) • [Environment Variables](#-environment-variables) • [Architecture](#-architecture--deployment) • [ML Notes](#-machine-learning-notes) • [Limitations & Privacy](#-limitations--privacy) • [Changelog](#-changelog)
 
 </div>
 
 ---
 
-## 🎯 Overview
+## 📌 What Works Right Now
 
-Satya Lens is a comprehensive platform designed to combat misinformation by analyzing and evaluating content across multiple media types.
+Satya Lens adheres to a strict honesty rule: **never fabricate results or claim certainty**. If an external AI model or API key is not configured, we provide honest `"not checked"` and `"not available"` transparency states with `score: null` rather than fake scores.
 
-### 🌟 Key Highlights
-
-- **Multi-format Detection**: Text, images, videos, audio files, and URLs
-- **Real-time Analysis**: Instant feedback on content authenticity
-- **Educational Tools**: Learn to spot fake content yourself
-- **Community Driven**: Crowdsourced verification and trust scoring
-- **Privacy First**: Optional edge-mode for local analysis
-- **Gamification**: Earn badges and points for contributing
-
----
-
-## 📊 Features
-
-### Content Analysis Capabilities
-
-| Media Type | Detection Methods | Confidence Score |
-|------------|------------------|------------------|
-| 📝 **Text** | NLP sentiment analysis, fact-checking APIs, linguistic patterns | ✓ High |
-| 🖼️ **Image** | ELA forensics, metadata analysis, reverse image search | ✓ High |
-| 🎥 **Video** | Frame-by-frame analysis, deepfake detection, audio-video sync | ✓ Medium |
-| 🔊 **Audio** | Voice cloning detection, spectral analysis, codec artifacts | ✓ Medium |
-| 🔗 **URL** | Domain reputation, content scraping, historical verification | ✓ High |
-
-### Detection Metrics
-
-```
-Truth Score Breakdown
-├── Forensic Analysis (40%)
-│   ├── Technical artifacts
-│   ├── Metadata inconsistencies
-│   └── Manipulation markers
-├── Cross-verification (30%)
-│   ├── Fact-checking databases
-│   ├── Reverse searches
-│   └── Source credibility
-├── AI Detection (20%)
-│   ├── Generative patterns
-│   ├── Synthetic markers
-│   └── Model signatures
-└── Community Input (10%)
-    ├── User reports
-    ├── Expert reviews
-    └── Historical data
-```
-
----
-
-## 🏗️ Architecture
-
-### Monorepo Structure
-
-```
-satya-lens/
-├── 🔧 backend/              # Express.js API server
-│   ├── src/
-│   │   ├── routes/
-│   │   │   └── analyze.js   # Main analysis endpoint
-│   │   ├── services/
-│   │   │   ├── detectors/   # Media-specific detectors
-│   │   │   │   ├── text.js
-│   │   │   │   ├── image.js
-│   │   │   │   ├── video.js
-│   │   │   │   ├── audio.js
-│   │   │   │   └── url.js
-│   │   │   ├── crossVerify.js
-│   │   │   ├── education.js
-│   │   │   └── credibility.js
-│   │   ├── db/
-│   │   │   └── mock.js      # Mock database
-│   │   └── server.js
-│   ├── package.json
-│   ├── .env.sample
-│   └── README.md
-│
-├── 🎨 frontend/             # React + TypeScript + Vite
-│   ├── src/
-│   │   ├── main.tsx
-│   │   ├── App.tsx
-│   │   ├── styles/
-│   │   │   └── index.css
-│   │   ├── api/
-│   │   │   └── client.ts
-│   │   └── components/
-│   │       ├── UploadPanel.tsx
-│   │       ├── TruthMeter.tsx
-│   │       ├── ReportCard.tsx
-│   │       ├── MentorTips.tsx
-│   │       ├── Badges.tsx
-│   │       ├── Leaderboard.tsx
-│   │       ├── TrustGraph.tsx
-│   │       ├── Chatbot.tsx
-│   │       └── ThemeToggle.tsx
-│   ├── index.html
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── postcss.config.js
-│   └── tailwind.config.js
-│
-└── vercel.json              # Deployment configuration
-```
-
-### Technology Stack
-
-**Frontend**
-- ⚛️ React 18 with TypeScript
-- ⚡ Vite for blazing-fast builds
-- 🎨 Tailwind CSS for styling
-- 📊 Recharts for data visualization
-- 🎯 Lucide React for icons
-
-**Backend**
-- 🟢 Node.js with Express.js
-- 📦 Multer for file uploads
-- 🔒 CORS enabled
-- 🌐 RESTful API design
+| Content Type | What We Check (No Keys) | What Gets Checked (With Keys) | What We CANNOT Do Yet |
+| :--- | :--- | :--- | :--- |
+| 📝 **Text** | Heuristic linguistic analysis (excessive capitalization, sensational punctuation, emotional clickbait, artificial urgency markers) and known debunked rumor lookup. | Real-time fact checks via **Google Fact Check Tools API** (querying PolitiFact, Snopes, FactCheck.org, Reuters) + structured reasoning & label normalization via **OpenAI** (`gpt-4o-mini`). | Fact-check private claims or novel local events not covered by public fact-checkers; guarantee 100% factual certainty. |
+| 🖼️ **Photo** | Magic byte header sniffing (JPEG, PNG, WebP, GIF), dimensions, aspect ratio, camera EXIF metadata extraction (make, model, capture timestamp, exposure), and editing software traces (Photoshop, GIMP, Canva tags). | Optional external image forensics / AI generation detection microservice (`IMAGE_DETECTOR_URL`). | Reliably detect AI-generated imagery or deepfakes from pixel data alone without a dedicated model. When unconfigured, returns `score: null` and explains why. |
+| 🎬 **Video** | Video container header inspection (ISO MP4 / WebM signatures), format MIME validation, file size integrity, and stream metadata. | Optional external deepfake video analysis microservice (`VIDEO_DETECTOR_URL`). | Frame-by-frame deepfake facial analysis or audio-video lip synchronization verification in browser/serverless environments. Returns `score: null`. |
+| 🎙️ **Voice / Audio** | Audio container sniffing, audio duration, bitrate, sample rate, channels, and lossless/lossy compression analysis via `music-metadata`. | Optional external synthetic voice cloning detection microservice (`AUDIO_DETECTOR_URL`). | Accurately detect advanced synthetic speech or voice cloning without dedicated audio neural network classifiers. Returns `score: null`. |
+| 🔗 **Website Link** | URL structure validation, HTTPS encryption status, direct IP address host detection, URL shortener redirection warnings (`bit.ly`, `tinyurl.com`), punycode/IDN homograph attack detection, and typosquatting lookalike detection against known trusted and low-credibility news domains. | **Google Safe Browsing Lookup API** (phishing, malware, and social engineering threat lists). | Crawl dynamic client-rendered single-page applications or verify full webpage text without server-side browser execution. |
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+- **Node.js**: v20 or later (`node -v`)
+- **npm**: v10 or later (`npm -v`)
+- **Python**: 3.10+ (optional, only needed for local ML training in `/ml`)
 
-```bash
-Node.js >= 16.0.0
-npm >= 8.0.0
-```
-
-### Installation
-
-#### 1️⃣ Clone the Repository
+### 1. Clone & Install Dependencies
 
 ```bash
 git clone https://github.com/satya-lens/satya-lens.git
 cd satya-lens
+
+# Install root, backend, and frontend dependencies in one command
+npm run install:all
 ```
 
-#### 2️⃣ Backend Setup
+### 2. Run Tests & Validation
 
 ```bash
-cd backend
+# Run both backend and frontend test suites
+npm test
 
-# Install dependencies
-npm install
+# Run TypeScript strict typecheck
+npm run typecheck
 
-# Configure environment variables
-cp .env.sample .env
-# Edit .env with your API keys
-
-# Start development server
-npm run dev
+# Run ESLint (zero warnings allowed)
+npm run lint
 ```
 
-**Environment Variables:**
+### 3. Run Locally
 
-```env
-PORT=5000
-NODE_ENV=development
-
-# API Keys (optional, for enhanced detection)
-OPENAI_API_KEY=your_openai_key
-GOOGLE_FACT_CHECK_API_KEY=your_google_key
-CLARIFAI_API_KEY=your_clarifai_key
-```
-
-#### 3️⃣ Frontend Setup
+Open two terminal tabs:
 
 ```bash
-cd ../frontend
+# Terminal 1: Backend API (runs on http://localhost:8080)
+npm run dev:backend
 
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
+# Terminal 2: Frontend UI (runs on http://localhost:5173)
+npm run dev:frontend
 ```
 
-The application will be available at `http://localhost:5173`
+Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 📡 API Reference
+## ⚙️ Environment Variables
 
-### Analyze Content
-
-**Endpoint:** `POST /api/analyze`
-
-**Content-Type:** `multipart/form-data` or `application/json`
-
-#### Request Examples
-
-**Text Analysis:**
-```json
-{
-  "type": "text",
-  "text": "Breaking: Major event happened today!",
-  "language": "en"
-}
-```
-
-**URL Analysis:**
-```json
-{
-  "type": "url",
-  "url": "https://example.com/article"
-}
-```
-
-**File Upload (Image/Video/Audio):**
-```bash
-curl -X POST http://localhost:5000/api/analyze \
-  -F "type=image" \
-  -F "file=@suspicious-image.jpg"
-```
-
-#### Response Structure
-
-```json
-{
-  "type": "image",
-  "truthScore": 68,
-  "label": "likely_fake",
-  "confidence": "medium",
-  "explanations": [
-    "Detected ELA artifacts around face region",
-    "EXIF timestamp mismatch with claimed date",
-    "No matching results in reverse image search"
-  ],
-  "summary": "This image likely has been manipulated. Multiple forensic markers suggest digital alteration, particularly in facial regions.",
-  "breakdown": {
-    "forensics": {
-      "ela_score": 0.72,
-      "splicing_detected": 0.61,
-      "clone_detection": 0.45
-    },
-    "metadata": {
-      "exif_present": true,
-      "timestamp_mismatch": true,
-      "camera_model": "Unknown",
-      "gps_coordinates": null
-    },
-    "crossVerification": [
-      {
-        "source": "Reuters Fact Check",
-        "match": false,
-        "credibility": 0.95
-      },
-      {
-        "source": "Snopes",
-        "match": false,
-        "credibility": 0.88
-      }
-    ]
-  },
-  "education": {
-    "tip": "Look for inconsistent lighting and shadows across different parts of the image.",
-    "fakeVsReal": [
-      "/examples/manipulated-comparison.jpg",
-      "/examples/original-reference.jpg"
-    ],
-    "learnMore": "/guides/image-forensics"
-  },
-  "gamification": {
-    "badge": "Truth Explorer",
-    "points": 5,
-    "newLevel": false,
-    "totalPoints": 125
-  },
-  "community": {
-    "votes": {
-      "true": 12,
-      "false": 34,
-      "unsure": 8
-    },
-    "expertReviews": 2,
-    "trustGraph": []
-  }
-}
-```
-
-### Truth Score Labels
-
-| Score Range | Label | Description |
-|------------|-------|-------------|
-| 0-20 | `highly_fake` | Strong evidence of manipulation |
-| 21-40 | `likely_fake` | Multiple fake indicators |
-| 41-60 | `uncertain` | Mixed or insufficient evidence |
-| 61-80 | `likely_true` | Appears authentic |
-| 81-100 | `highly_true` | Strong verification |
-
----
-
-## 🎮 Gamification System
-
-### Badges & Achievements
-
-| Badge | Requirement | Points |
-|-------|------------|--------|
-| 🔍 Truth Seeker | Analyze first content | 5 |
-| 🎯 Fact Finder | 10 successful verifications | 25 |
-| 🏆 Truth Champion | 100 analyses | 100 |
-| 👥 Community Hero | 50+ helpful votes | 50 |
-| 🧠 Expert Analyst | 90%+ accuracy rate | 200 |
-
-### Leaderboard
-
-```
-┌────────────────────────────────────┐
-│  Top Truth Seekers (This Month)   │
-├────┬──────────┬────────┬───────────┤
-│ #  │   User   │ Points │  Accuracy │
-├────┼──────────┼────────┼───────────┤
-│ 🥇 │  alice   │  1,250 │    94%    │
-│ 🥈 │  bob     │    980 │    91%    │
-│ 🥉 │  charlie │    875 │    89%    │
-└────┴──────────┴────────┴───────────┘
-```
-
----
-
-## 🎓 Educational Resources
-
-Satya Lens includes educational components:
-
-- **AI Mentor Tips**: Context-specific advice for each analysis
-- **Side-by-side Comparisons**: Real vs. fake examples
-- **Detection Guides**: Learn forensic techniques
-- **Interactive Tutorials**: Hands-on practice
-- **Latest Trends**: Updates on emerging fake content tactics
-
----
-
-## 🔒 Privacy & Security
-
-### Edge Mode (Coming Soon)
-
-For sensitive content, enable edge-mode to:
-- ✅ Process data locally in your browser
-- ✅ No data sent to servers
-- ✅ Instant offline analysis
-- ⚠️ Limited to basic heuristics
-
-### Data Handling
-
-- Uploaded files are analyzed in-memory
-- No permanent storage of user content
-- Optional anonymous statistics collection
-- GDPR compliant
-
----
-
-## 🚀 Deployment
-
-### Frontend (Vercel - Recommended)
+Copy `backend/.env.sample` to `backend/.env` if you wish to configure optional integrations:
 
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy from frontend directory
-cd frontend
-vercel --prod
+cp backend/.env.sample backend/.env
 ```
 
-The `vercel.json` configuration handles routing and backend proxy.
+> **Note:** **None of these keys are required to run the app.** Satya Lens works out of the box with honest "not available" states.
 
-### Backend Options
-
-**Option 1: Render**
-```bash
-# Connect your GitHub repo to Render
-# Set environment variables in dashboard
-# Deploy automatically on push
-```
-
-**Option 2: Heroku**
-```bash
-cd backend
-heroku create satya-lens-api
-git push heroku main
-```
-
-**Option 3: Fly.io**
-```bash
-cd backend
-flyctl launch
-flyctl deploy
-```
-
-### Environment Configuration
-
-Update frontend API endpoint after backend deployment:
-
-```typescript
-// frontend/src/api/client.ts
-const API_BASE_URL = process.env.VITE_API_URL || 'https://your-backend.com';
-```
+| Variable | Default | Purpose | Where to get one |
+| :--- | :--- | :--- | :--- |
+| `PORT` | `8080` | Port for Express backend server in local development. | System / local environment |
+| `ALLOWED_ORIGIN` | `http://localhost:5173` | Comma-separated list of allowed CORS origins. Default is same-origin in production. | Deployment domain |
+| `MAX_UPLOAD_MB` | `4` | Maximum allowable upload file size in megabytes. | Set to `<= 4` for Vercel |
+| `RATE_LIMIT_WINDOW_MS` | `900000` | Rate limit sliding window (15 minutes in milliseconds). | Security configuration |
+| `RATE_LIMIT_MAX` | `30` | Maximum requests per IP address within the rate window. | Security configuration |
+| `FACT_CHECK_GOOGLE_API_KEY` | *(empty)* | Enables real-time claim verification against global fact-checking publishers via Google Fact Check Tools API. | [Google Fact Check APIs](https://toolbox.google.com/factcheck/apis) |
+| `OPENAI_API_KEY` | *(empty)* | Enables LLM claim reasoning and conversational context responses via strict JSON formatting. | [OpenAI Platform](https://platform.openai.com) |
+| `OPENAI_MODEL` | `gpt-4o-mini` | OpenAI model identifier used for claim reasoning. | OpenAI Platform |
+| `GOOGLE_TRANSLATE_API_KEY` | *(empty)* | Enables batched multi-language translation (e.g. English ↔ Hindi). | [Google Cloud Translation](https://cloud.google.com/translate) |
+| `GOOGLE_SAFE_BROWSING_KEY` | *(empty)* | Enables malware and phishing verification for URL links. | [Google Safe Browsing](https://developers.google.com/safe-browsing) |
+| `TEXT_MODEL_URL` | *(empty)* | URL to optional self-hosted FastAPI text model (see `/ml`). | Self-hosted instance |
+| `IMAGE_DETECTOR_URL` | *(empty)* | URL to optional self-hosted image forensics model. | Self-hosted instance |
+| `VIDEO_DETECTOR_URL` | *(empty)* | URL to optional self-hosted video forensics model. | Self-hosted instance |
+| `AUDIO_DETECTOR_URL` | *(empty)* | URL to optional self-hosted audio forensics model. | Self-hosted instance |
 
 ---
 
-## 🛠️ Development Roadmap
+## 🏛️ Architecture & Deployment
 
-- [ ] Integration with OpenAI GPT-4 for text analysis
-- [ ] Advanced deepfake detection models
-- [ ] Real-time collaborative fact-checking
-- [ ] Browser extension
-- [ ] Mobile applications (iOS/Android)
-- [ ] API rate limiting and authentication
-- [ ] Advanced analytics dashboard
-- [ ] Multi-language support expansion
-- [ ] Edge-mode full implementation
+### High-Level Architecture
 
----
+```
+                  ┌─────────────────────────────────────────┐
+                  │          Browser (React 18 + TS)        │
+                  │   - 3-Step Plain English Flow           │
+                  │   - Warm Paper Theme & Print View       │
+                  │   - Client-side 4 MB validation         │
+                  └────────────────────┬────────────────────┘
+                                       │ /api/*
+                                       ▼
+                  ┌─────────────────────────────────────────┐
+                  │    Express API (CommonJS / Node 20)     │
+                  │   - Helmet, CORS, Rate Limiting (30/15m)│
+                  │   - Memory Multer (0-Storage Buffer)    │
+                  │   - Label Normalization Engine          │
+                  │   - In-Memory Fact Check Cache (10m)    │
+                  └───────┬──────────────────────┬──────────┘
+                          │                      │
+             ┌────────────┴──────────┐    ┌──────┴──────────────────┐
+             ▼                       ▼    ▼                         ▼
+   Google Fact Check API      OpenAI Mini   Google Safe Browsing   Local Metadata
+   (Claim Search v1alpha1)    (Strict JSON) (Threat Lookup v4)     (EXIF, magic)
+```
 
-## 🤝 Contributing
+### Vercel Serverless Deployment
 
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow existing code style
-- Add tests for new features
-- Update documentation
-- Ensure all tests pass
-- Keep commits atomic and well-described
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Entrypoint (`/api/index.js`)**: Exports the Express application directly as a Vercel Serverless Function. In local development, `backend/src/server.js` listens on port 8080.
+- **Rewrites (`vercel.json`)**: Directs all `/api/*` traffic to `/api/index.js` while serving frontend assets statically.
+- **Why uploads are capped at 4 MB**: Vercel Serverless Functions enforce a strict request body payload limit of ~4.5 MB. To prevent ungraceful HTTP 413 drops, both the client (`UploadPanel`) and the server (`multer`) enforce a clean 4 MB limit with plain-English user instructions.
+- **Zero-Storage Privacy**: All file uploads are buffered in RAM memory storage (`multer.memoryStorage()`) and discarded after inspection. No user media is written to disk or stored in any database.
 
 ---
 
-## 🙏 Acknowledgments
+## 🧠 Machine Learning Notes
 
-- Fact-checking APIs: Google Fact Check Tools, ClaimBuster
-- AI Detection: OpenAI, Anthropic Claude
-- Forensic Tools: ELA, JPEG compression analysis
-- Community: Open-source contributors
+The `/ml` directory provides an experimental text classification microservice based on RoBERTa fine-tuned on the political claim dataset [LIAR](https://huggingface.co/datasets/liar).
+
+### Dataset & Training
+- The LIAR dataset contains 6 integer labels:
+  - `0`: False
+  - `1`: Half-True
+  - `2`: Mostly-True
+  - `3`: True
+  - `4`: Barely-True
+  - `5`: Pants-on-Fire
+- In `ml/train_text.py`, these integer labels are mapped into 3 consolidated classes:
+  - **False** (`0`): classes `0`, `4`, `5`
+  - **Uncertain** (`1`): class `1`
+  - **True** (`2`): classes `2`, `3`
+- The training script logs class distributions and prints a warning if any class exceeds 70% of the dataset.
+
+> ⚠️ **Important Accuracy Warning:**  
+> Machine learning models trained on the LIAR dataset have historically low general-world accuracy (~60–65%) and cannot independently verify real-world facts. They learn linguistic style markers, not objective truth. Satya Lens treats ML outputs strictly as secondary heuristics and never presents them as definitive proof.
 
 ---
 
+## 🛡️ Limitations & Privacy
+
+- **Signals, Not Final Proof**: Satya Lens provides signals and educational indicators, not final truth verdicts. Always verify important breaking news and medical or financial claims across multiple authoritative primary sources.
+- **Zero Content Storage**: We do not store your text, links, or uploaded media. Files are processed in volatile server memory and discarded immediately upon response completion.
+- **Imperfect Detection**: AI models, domain heuristics, and metadata analysis can produce both false positives and false negatives. A missing EXIF header does not prove an image is AI-generated, and clean punctuation does not guarantee factual truth.
+
+---
+
+## 📄 License & Contributing
+
+Distributed under the **MIT License**. Contributions, bug reports, and pull requests are welcome!
+
+---
+
+## 📜 Changelog
+
+### v2.0.0 (Satya Lens Major Overhaul)
+- **Product Rebranding**: Completely rebranded from *TruthLens AI* to **Satya Lens** ("See what's real.") across UI, backend, documentation, package slugs, and logos.
+- **Removal of Fabricated Metrics**:
+  - Deleted hash-seeded fake ELA error metrics and simulated image/audio manipulation percentages.
+  - Replaced circular credibility calculation (`truthScore * 0.9 + 5`) with real signal aggregation (returns `null` when no real signal exists).
+  - Removed misleading trust networks, gamification points, and leaderboards.
+- **Strict Honesty & Transparency**:
+  - Introduced `score: null` and plain-English "We cannot tell from this file alone" for images/videos/audio when external AI models are not configured.
+  - Implemented honest `checks` transparency log listing every check that ran and what did not run.
+  - Integrated real **Google Fact Check Tools API** with in-memory 10-minute caching.
+- **New Response Schema**:
+  - Modern, self-documenting schema (`type`, `input`, `verdict`, `reasons`, `sources`, `checks`, `nextSteps`, `technical`, `disclaimer`).
+  - Single standardized verdict vocabulary: `likely_true` | `likely_false` | `uncertain`.
+- **UI & UX Redesign**:
+  - Warm light paper color palette (cream `#FFFDF7`, warm sand `#F4EFEA`, paper `#FFFFFF`, brown `#8B5E3C`, yellow `#F6C453`).
+  - Structured 3-step interface: *1. What you want to check* -> *2. What you gave us* -> *3. What we found*.
+  - Removed heavy charting dependencies (`recharts`, `zustand`), cutting JavaScript bundle size from 618 kB to 249 kB.
+  - Added full Hindi (`hi`) and English (`en`) localization.
+  - Added high-contrast accessible styling and dedicated print stylesheet for clean PDF export.
+- **Security & Quality**:
+  - Hardened with `helmet`, configurable IP rate limiting (`express-rate-limit`), and explicit CORS restrictions.
+  - 4 MB file upload limit with friendly HTTP 413 handling and 25-second server timeout protection.
+  - Added comprehensive test suites: Node test runner for backend and Vitest + Testing Library for frontend (31 passing tests).
+  - Enforced TypeScript strict mode (`no-explicit-any`) and automated GitHub Actions CI.

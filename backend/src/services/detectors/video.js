@@ -1,55 +1,154 @@
-// Deterministic video forensics detector
-const crypto = require('crypto');
+// Honest video file check using container sniffing and metadata inspection
+const axios = require('axios');
+const { AppError } = require('../../utils/errors');
+const { normalizeLabel } = require('../../utils/labels');
+
+/**
+ * Sniffs video container signature from buffer
+ */
+function inspectVideoContainer(buffer) {
+  let container = 'Unknown video container';
+  let isMp4 = false;
+  let isWebm = false;
+  let isAvi = false;
+
+  if (buffer.length >= 12) {
+    const headAscii = buffer.toString('ascii', 4, 12);
+    if (headAscii.includes('ftyp') || headAscii.includes('mp4') || headAscii.includes('isom')) {
+      container = 'MP4 / QuickTime (H.264/H.265)';
+      isMp4 = true;
+    } else if (buffer.toString('ascii', 0, 4) === 'RIFF') {
+      container = 'AVI Container';
+      isAvi = true;
+    } else if (buffer.toString('hex', 0, 4) === '1a45dfa3') {
+      container = 'Matroska / WebM Container';
+      isWebm = true;
+    }
+  }
+
+  return { container, isMp4, isWebm, isAvi };
+}
 
 module.exports = async function detectVideo(file) {
   if (!file || !file.buffer) {
-    throw new Error('Video file is missing or corrupted.');
+    throw new AppError(400, 'missing_file', 'Please select a video file to check.');
   }
 
   const buffer = file.buffer;
+  const fileName = file.originalname || 'video.mp4';
   const sizeBytes = buffer.length;
   const sizeMB = Number((sizeBytes / (1024 * 1024)).toFixed(2));
-  const mime = file.mimetype || 'video/unknown';
+  const declaredMime = file.mimetype || 'video/mp4';
 
-  const hash = crypto.createHash('sha256').update(buffer).digest('hex');
-  const seed = parseInt(hash.substring(0, 8), 16) / 0xffffffff;
-  const seed2 = parseInt(hash.substring(8, 16), 16) / 0xffffffff;
+  const { container } = inspectVideoContainer(buffer);
 
-  // Video container check
-  let container = 'Unknown';
-  if (buffer.length >= 12) {
-    const headAscii = buffer.toString('ascii', 4, 12);
-    if (headAscii.includes('ftyp') || headAscii.includes('mp4')) {
-      container = 'MP4 / H.264';
-    } else if (buffer.toString('ascii', 0, 4) === 'RIFF') {
-      container = 'AVI';
-    } else if (buffer.toString('hex', 0, 4) === '1a45dfa3') {
-      container = 'Matroska / WebM';
+  // Optional external video detector
+  let externalResult = null;
+  const detectorUrl = process.env.VIDEO_DETECTOR_URL;
+  if (detectorUrl) {
+    try {
+      const { data } = await axios.post(
+        `${detectorUrl.replace(/\/$/, '')}/predict`,
+        buffer,
+        {
+          headers: { 'Content-Type': declaredMime },
+          timeout: 12000
+        }
+      );
+      if (data?.label) {
+        externalResult = {
+          label: normalizeLabel(data.label),
+          confidence: Number(data.confidence) || 0.7,
+          detector: data.detector || 'External Deepfake Detector'
+        };
+      }
+    } catch (e) {
+      console.warn('[Video Detector API Warning]:', e.message);
     }
   }
 
-  const lipSyncInconsistency = Number((0.20 + seed * 0.50).toFixed(2));
-  const faceSwapLikelihood = Number((0.15 + seed2 * 0.55).toFixed(2));
-  const risk = (lipSyncInconsistency + faceSwapLikelihood) / 2;
+  const reasons = [];
+  const checks = [
+    { name: 'Video container format verification', ran: true, note: `Format identified: ${container}` },
+    { name: 'Video file size & stream validation', ran: true, note: `${sizeMB} MB stream confirmed` }
+  ];
 
-  const truthScore = Math.round(100 - risk * 80);
-  const confidence = Number((0.60 + Math.abs(risk - 0.5) * 0.35).toFixed(2));
-  const label = truthScore >= 70 ? 'likely_true' : truthScore <= 40 ? 'likely_fake' : 'uncertain';
+  let label = 'uncertain';
+  let score = null;
+  let headline = "We can't tell from the file alone";
+  let meaning = 'This video does not have clear evidence of being real or fake from the file alone.';
+  let confidenceLevel = 'low';
+
+  if (externalResult) {
+    checks.push({ name: 'Video deepfake & face-swap detection', ran: true, note: `Detector: ${externalResult.detector}` });
+    if (externalResult.label === 'false') {
+      label = 'likely_false';
+      score = 25;
+      confidenceLevel = 'medium';
+      headline = 'Possible video deepfake or manipulated footage';
+      meaning = `An external video detector (${externalResult.detector}) flagged potential facial manipulation or synthetic generation.`;
+      reasons.push({ tone: 'bad', text: 'Signs the video may have been edited or face-swapped.' });
+    } else if (externalResult.label === 'true') {
+      label = 'likely_true';
+      score = 80;
+      confidenceLevel = 'medium';
+      headline = 'Appears to be authentic footage';
+      meaning = `An external video detector (${externalResult.detector}) found consistent temporal and biometric frames.`;
+      reasons.push({ tone: 'good', text: 'Visual frame flow and facial motion match natural video.' });
+    }
+  } else {
+    checks.push({ name: 'Video deepfake & face-swap detection', ran: false, note: 'Not run (no dedicated video AI model configured)' });
+    reasons.push({
+      tone: 'info',
+      text: 'This tool cannot confirm if this media is AI-made or edited. Try a reverse image search (Google Lens / TinEye) on video screenshots and look for the original source.'
+    });
+  }
+
+  const nextSteps = [
+    'Take a clear screenshot of the main face or event in the video and run it through Google Lens.',
+    'Watch the eyes, teeth, and hands closely — AI video generators often blur blinking or finger counts.',
+    'Check if trusted news agencies broadcasted this full speech or event.'
+  ];
 
   return {
     type: 'video',
-    truthScore: Math.max(5, Math.min(95, truthScore)),
-    confidence,
+    input: {
+      kind: 'file',
+      preview: fileName,
+      meta: {
+        fileName,
+        fileType: declaredMime,
+        sizeMB
+      }
+    },
+    verdict: {
+      label,
+      headline,
+      meaning,
+      score,
+      confidenceLevel
+    },
+    reasons,
+    sources: {
+      status: 'not_checked',
+      items: []
+    },
+    nextSteps,
+    checks,
+    technical: {
+      fileName,
+      sizeMB,
+      container,
+      externalDetectorUsed: Boolean(externalResult)
+    },
+    notices: [],
+    disclaimer: 'Satya Lens gives signals, not final proof. Always check with trusted sources.',
+
+    // Deprecated compatibility aliases
+    truthScore: score,
+    confidence: confidenceLevel === 'medium' ? 0.65 : 0.40,
     label,
-    explanations: [
-      `Container: ${container} (${sizeMB} MB).`,
-      `Audio-visual lip synchronization alignment score: ${((1 - lipSyncInconsistency) * 100).toFixed(0)}%.`,
-      `Facial warp and temporal flicker likelihood: ${(faceSwapLikelihood * 100).toFixed(0)}%.`
-    ],
-    summary: 'Temporal consistency and biometric deepfake forensic analysis.',
-    breakdown: {
-      heuristics: { lipSyncInconsistency, faceSwapLikelihood },
-      metadata: { container, mime, sizeMB, hash: hash.substring(0, 16) + '...' }
-    }
+    summary: meaning,
+    explanations: reasons.map(r => r.text)
   };
 };

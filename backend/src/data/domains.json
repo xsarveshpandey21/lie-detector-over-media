@@ -1,0 +1,46 @@
+{
+  "trusted": [
+    "reuters.com",
+    "apnews.com",
+    "bbc.com",
+    "bbc.co.uk",
+    "thehindu.com",
+    "indianexpress.com",
+    "pib.gov.in",
+    "who.int",
+    "un.org",
+    "snopes.com",
+    "politifact.com",
+    "factcheck.org",
+    "altnews.in",
+    "boomlive.in",
+    "factly.in",
+    "vishvasnews.com"
+  ],
+  "satire": [
+    "theonion.com",
+    "babylonbee.com",
+    "newsthump.com",
+    "fakingnews.com"
+  ],
+  "lowCredibility": [
+    "infowars.com",
+    "beforeitsnews.com",
+    "worldnewsdailyreport.com",
+    "naturalnews.com",
+    "clickbait.com",
+    "rumors.net",
+    "fake-news.example"
+  ],
+  "shorteners": [
+    "bit.ly",
+    "tinyurl.com",
+    "t.co",
+    "goo.gl",
+    "ow.ly",
+    "is.gd",
+    "buff.ly",
+    "cutt.ly"
+  ]
+}
+

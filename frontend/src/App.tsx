@@ -1,97 +1,200 @@
-import { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import Header from './components/Header';
+import StepIndicator from './components/StepIndicator';
 import UploadPanel from './components/UploadPanel';
-import TruthMeter from './components/TruthMeter';
-import ReportCard from './components/ReportCard';
-import MentorTips from './components/MentorTips';
-import Badges from './components/Badges';
-import Leaderboard from './components/Leaderboard';
-import TrustGraph from './components/TrustGraph';
+import EmptyState from './components/EmptyState';
+import ErrorState from './components/ErrorState';
+import InputSummaryCard from './components/InputSummaryCard';
+import VerdictBanner from './components/VerdictBanner';
+import ConfidenceSteps from './components/ConfidenceSteps';
+import ScoreBar from './components/ScoreBar';
+import ReasonsList from './components/ReasonsList';
+import FactCheckCards from './components/FactCheckCards';
+import NextSteps from './components/NextSteps';
+import ChecksTransparency from './components/ChecksTransparency';
+import TechnicalDetails from './components/TechnicalDetails';
+import ReportActions from './components/ReportActions';
+import Notices from './components/Notices';
 import Chatbot from './components/Chatbot';
-import ThemeToggle from './components/ThemeToggle';
-import ConfidenceChart from './components/ConfidenceChart';
-import SourcesList from './components/SourcesList';
-import ShareReport from './components/ShareReport';
-import HelpTooltip from './components/HelpTooltip';
-import StanceBarChart from './components/StanceBarChart';
-import TrustMap from './components/TrustMap';
+import Toast from './components/Toast';
+import { useAnalyze } from './hooks/useAnalyze';
+import enTranslations from './i18n/en.json';
+import hiTranslations from './i18n/hi.json';
+import { ContentType } from './types';
 
-function App() {
-  const [report, setReport] = useState<any | null>(null);
+export default function App() {
+  const [lang, setLang] = useState<'en' | 'hi'>('en');
+  const t = lang === 'hi' ? hiTranslations : enTranslations;
+
+  const {
+    status,
+    data: report,
+    error,
+    errorCode,
+    loadingMessage,
+    runAnalysis,
+    cancel,
+    reset
+  } = useAnalyze();
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const resultRef = useRef<HTMLElement>(null);
+
+  // Focus result heading when report arrives
+  useEffect(() => {
+    if (status === 'success' && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: 'smooth' });
+      resultRef.current.focus();
+    }
+  }, [status]);
+
+  function handleCheck(payload: {
+    type: ContentType;
+    text?: string;
+    url?: string;
+    file?: File | null;
+  }) {
+    runAnalysis({ ...payload, language: lang });
+  }
+
+  const currentStep = status === 'success' && report ? 3 : status === 'loading' ? 2 : 1;
 
   return (
-    <div className="min-h-screen text-gray-900 dark:text-gray-100">
-      <div className="max-w-6xl mx-auto p-4">
-        <header className="rounded-xl bg-paper border border-line px-4 py-3 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-3">
-            <svg className="w-8 h-8 shrink-0" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-              <circle cx="13" cy="13" r="8" stroke="#8B5E3C" strokeWidth="2.75" fill="#FFFDF7" />
-              <path d="M9 10 A 5 5 0 0 1 15 8" stroke="#F6C453" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="14" cy="12" r="1.5" fill="#F6C453" />
-              <line x1="19" y1="19" x2="27" y2="27" stroke="#8B5E3C" strokeWidth="3" strokeLinecap="round" />
-            </svg>
-            <div>
-              <h1 className="text-xl font-bold font-heading text-ink leading-tight">Satya Lens</h1>
-              <p className="text-xs text-muted">See what&apos;s real.</p>
-            </div>
-          </div>
-          <ThemeToggle />
-        </header>
+    <div className="min-h-screen bg-cream dark:bg-brown-900 text-ink dark:text-cream flex flex-col font-sans selection:bg-yellow-300 selection:text-ink">
+      <Header language={lang} onLanguageChange={setLang} />
 
-        <UploadPanel onReport={setReport} />
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-4 sm:py-6 space-y-6">
+        {/* Step Indicator */}
+        <StepIndicator currentStep={currentStep} t={t} />
 
-        {report && (
-          <div className="grid md:grid-cols-3 gap-4 mt-6">
-            <div className="md:col-span-2 space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-semibold">Truth Meter</h2>
-                    <HelpTooltip label="Truth Meter" text="Overall likelihood the claim/content is true. Color-coded: green=true, yellow=uncertain, red=false." />
-                  </div>
-                  <TruthMeter score={report.truthScore} label={report.label} />
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-semibold">Confidence</h2>
-                    <HelpTooltip label="Confidence" text="Model and heuristics confidence in the assessment, independent of true/false label." />
-                  </div>
-                  <ConfidenceChart confidence={report.confidence} />
-                </div>
-              </div>
+        {/* STEP 1: Content Input Panel (Shown when idle or loading) */}
+        {(!report || status === 'loading') && (
+          <UploadPanel
+            onCheck={handleCheck}
+            loading={status === 'loading'}
+            loadingMessage={loadingMessage}
+            onCancel={cancel}
+            onError={(msg) => setToastMessage(msg)}
+            t={t}
+          />
+        )}
 
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="font-semibold">Explainable Report</h2>
-                  <HelpTooltip label="Explainable Report" text="Human-readable reasons: heuristics, artifacts, metadata, and model rationale." />
-                </div>
-                <ReportCard report={report} />
-              </div>
+        {/* Error State */}
+        {status === 'error' && error && (
+          <ErrorState
+            error={error}
+            errorCode={errorCode}
+            onRetry={reset}
+          />
+        )}
 
-              <SourcesList items={report.breakdown?.crossVerification || []} />
-              <div className="grid sm:grid-cols-2 gap-4">
-                <StanceBarChart items={report.breakdown?.crossVerification || []} />
-                <TrustMap items={report.breakdown?.crossVerification || []} />
-              </div>
-              <TrustGraph data={report.community?.trustGraph || []} />
-              <ShareReport report={report} />
-            </div>
+        {/* Empty State before check */}
+        {status === 'idle' && !report && (
+          <EmptyState t={t} />
+        )}
+
+        {/* RESULTS SECTION: Shown after successful check */}
+        {status === 'success' && report && (
+          <section
+            ref={resultRef}
+            tabIndex={-1}
+            aria-live="polite"
+            className="space-y-6 outline-none"
+          >
+            {/* STEP 2: What You Gave Us */}
+            <InputSummaryCard
+              input={report.input}
+              onEdit={reset}
+              onReset={reset}
+              t={t}
+            />
+
+            {/* STEP 3: What We Found */}
             <div className="space-y-4">
-              <MentorTips tip={report.education?.tip} />
-              <Badges badge={report.gamification?.badge} points={report.gamification?.points} />
-              <Leaderboard />
-              <Chatbot />
-            </div>
-          </div>
-        )}
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted dark:text-brown-300">
+                  {t.step3Title}
+                </h3>
+                <span className="text-xs text-muted dark:text-brown-400">
+                  Step 3 of 3
+                </span>
+              </div>
 
-        {!report && (
-          <div className="mt-8 text-sm text-gray-600 dark:text-gray-300">
-            Upload text, image, video, audio, or a URL to verify authenticity. Multilingual support and edge-mode coming soon.
-          </div>
+              {/* 1. Verdict Banner */}
+              <VerdictBanner verdict={report.verdict} />
+
+              {/* 2 & 3. Evidence Strength & Reliability Score Grid */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <ConfidenceSteps level={report.verdict.confidenceLevel} />
+                <ScoreBar score={report.verdict.score} />
+              </div>
+
+              {/* Notices (if any, e.g. translation notes) */}
+              <Notices notices={report.notices} />
+
+              {/* 4. Why we think this (Plain English reasons) */}
+              <ReasonsList reasons={report.reasons} />
+
+              {/* 5. What other sources say (Real Fact-Check Search) */}
+              <FactCheckCards sources={report.sources} />
+
+              {/* 6. What you can do next */}
+              <NextSteps steps={report.nextSteps} />
+
+              {/* 7. How we checked (Transparency) */}
+              <ChecksTransparency checks={report.checks} />
+
+              {/* Optional Assistant for current report */}
+              <Chatbot report={report} />
+
+              {/* 8. Technical details accordion */}
+              <TechnicalDetails technical={report.technical} rawReport={report} />
+
+              {/* 9. Report Actions & Print button */}
+              <ReportActions
+                report={report}
+                onReset={reset}
+                onToast={setToastMessage}
+                t={t}
+              />
+
+              {/* 10. Disclaimer footer */}
+              <p className="text-center text-xs text-muted dark:text-brown-300 pt-2">
+                {report.disclaimer}
+              </p>
+            </div>
+          </section>
         )}
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="mt-12 py-6 border-t border-line dark:border-brown-700 bg-sand/40 dark:bg-brown-950 text-center text-xs text-muted dark:text-brown-300 space-y-2">
+        <p className="font-semibold text-ink dark:text-cream">
+          Satya Lens &bull; See what&apos;s real.
+        </p>
+        <p className="max-w-md mx-auto">
+          An open educational tool providing signals to help you judge content reliability. Never a substitute for critical thinking.
+        </p>
+        <div className="flex items-center justify-center gap-4 pt-1">
+          <a
+            href="https://github.com/satya-lens/satya-lens"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-brown-700 dark:hover:text-yellow-300 underline underline-offset-2"
+          >
+            GitHub
+          </a>
+          <span>&bull;</span>
+          <span>Privacy: Zero-Storage in Memory</span>
+        </div>
+      </footer>
+
+      {/* Toast Notification */}
+      <Toast
+        message={toastMessage}
+        onClose={() => setToastMessage(null)}
+        tone="warn"
+      />
     </div>
   );
 }
-
-export default App;

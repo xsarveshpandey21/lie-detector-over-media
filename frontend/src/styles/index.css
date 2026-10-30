@@ -2,11 +2,111 @@
 @tailwind components;
 @tailwind utilities;
 
-body { @apply bg-gray-50 dark:bg-gray-900; }
-.card { @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border border-gray-100 dark:border-gray-700; }
+@layer base {
+  body {
+    background-color: #FFFDF7;
+    color: #3B2A20;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    font-size: 16px;
+  }
 
-.btn { @apply px-4 py-2 rounded-md transition-colors duration-200; }
-.btn-primary { @apply btn bg-blue-600 hover:bg-blue-700 text-white; }
-.btn-outline { @apply btn border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700; }
+  .dark body {
+    background-color: #2D1F17;
+    color: #FBF5EE;
+  }
 
-.header-gradient { @apply bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white; }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+  }
+}
+
+.card {
+  background-color: #FFFFFF;
+  border: 1px solid #EADBC8;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(139, 94, 60, 0.08);
+  padding: 1.25rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.dark .card {
+  background-color: #3B2A20;
+  border-color: #724B2F;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary {
+  background-color: #8B5E3C;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  transition: background-color 0.15s ease-in-out;
+  outline: none;
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: #724B2F;
+}
+.btn-primary:focus-visible {
+  box-shadow: 0 0 0 3px #F6C453;
+}
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  color: #8B5E3C;
+  border: 1px solid #8B5E3C;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.15s ease-in-out;
+}
+.dark .btn-secondary {
+  background-color: #3B2A20;
+  color: #F3E6D6;
+  border-color: #C9A27E;
+}
+.btn-secondary:hover:not(:disabled) {
+  background-color: #FBF5EE;
+}
+.dark .btn-secondary:hover:not(:disabled) {
+  background-color: #724B2F;
+}
+.btn-secondary:focus-visible {
+  box-shadow: 0 0 0 3px #F6C453;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print Stylesheet for Report PDF export */
+@media print {
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  header, footer, .no-print, button {
+    display: none !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #CCCCCC !important;
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+  .print-only {
+    display: block !important;
+  }
+}

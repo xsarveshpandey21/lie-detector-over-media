@@ -1,199 +1,200 @@
-import { useState } from 'react';
-import { analyze } from '../api/client';
+import React, { useState } from 'react';
+import { ContentType } from '../types';
+import InputTabs from './InputTabs';
+import TextInput from './TextInput';
+import LinkInput from './LinkInput';
+import FileDrop from './FileDrop';
+import ExampleChips, { ExampleItem } from './ExampleChips';
 
-export default function UploadPanel({ onReport }: { onReport: (r: any) => void }) {
-  const [type, setType] = useState<'text' | 'image' | 'video' | 'audio' | 'url'>('text');
-  const [text, setText] = useState('');
-  const [url, setUrl] = useState('');
-  const [file, setFile] = useState<File | null>(null);
-  const [language, setLanguage] = useState('en');
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+interface UploadPanelProps {
+  onCheck: (payload: {
+    type: ContentType;
+    text?: string;
+    url?: string;
+    file?: File | null;
+  }) => void;
+  loading: boolean;
+  loadingMessage: string;
+  onCancel: () => void;
+  onError: (msg: string) => void;
+  t: {
+    step1Title: string;
+    tabs: Record<ContentType, string>;
+    tabHelp: Record<ContentType, string>;
+    placeholders: {
+      text: string;
+      url: string;
+    };
+    dropzones: {
+      photo: string;
+      video: string;
+      audio: string;
+      limit: string;
+    };
+    buttons: {
+      check: string;
+      cancel: string;
+      checking: string;
+      remove: string;
+    };
+  };
+  initialValues?: {
+    type?: ContentType;
+    text?: string;
+    url?: string;
+    file?: File | null;
+  };
+}
 
-  const samples = [
-    {
-      title: '⚡ Sensational Rumor',
-      type: 'text' as const,
-      content: 'SHOCKING: Doctors reveal miracle cure that big pharma is desperately trying to suppress! 100% guaranteed!'
-    },
-    {
-      title: '📰 Factual Report',
-      type: 'text' as const,
-      content: 'According to a study published in Reuters, researchers from Oxford University reported a 15% reduction in cardiovascular risk.'
-    },
-    {
-      title: '🔗 Fact-Checking URL',
-      type: 'url' as const,
-      content: 'https://www.reuters.com/fact-check'
-    }
-  ];
+export default function UploadPanel({
+  onCheck,
+  loading,
+  loadingMessage,
+  onCancel,
+  onError,
+  t,
+  initialValues
+}: UploadPanelProps) {
+  const [selectedTab, setSelectedTab] = useState<ContentType>(initialValues?.type || 'text');
+  const [text, setText] = useState<string>(initialValues?.text || '');
+  const [url, setUrl] = useState<string>(initialValues?.url || '');
+  const [file, setFile] = useState<File | null>(initialValues?.file || null);
 
-  function applySample(sample: typeof samples[0]) {
-    setType(sample.type);
-    setErrorMessage(null);
-    if (sample.type === 'text') {
-      setText(sample.content);
-    } else if (sample.type === 'url') {
-      setUrl(sample.content);
+  // Requirement 4: Reset file (and preview) when the type tab changes so an image can NEVER be sent as a video
+  function handleTabChange(newTab: ContentType) {
+    if (newTab !== selectedTab) {
+      setSelectedTab(newTab);
+      setFile(null); // Clears file immediately on tab change
     }
   }
 
-  async function submit() {
-    setErrorMessage(null);
+  function handleExampleSelect(example: ExampleItem) {
+    setSelectedTab(example.type);
+    setFile(null);
+    if (example.type === 'text') {
+      setText(example.content);
+    } else if (example.type === 'url') {
+      setUrl(example.content);
+    }
+  }
 
-    if (type === 'text' && !text.trim()) {
-      setErrorMessage('Please enter or paste text to verify.');
-      return;
-    }
-    if (type === 'url' && !url.trim()) {
-      setErrorMessage('Please enter a website URL to verify.');
-      return;
-    }
-    if (['image', 'video', 'audio'].includes(type) && !file) {
-      setErrorMessage(`Please select a ${type} file from your device.`);
-      return;
-    }
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (loading) return;
 
-    setLoading(true);
-    try {
-      const data = await analyze({ type, text, url, file, language });
-      onReport(data);
-    } catch (e: any) {
-      const msg = e?.response?.data?.message || e?.message || 'Verification request failed. Please check backend connection.';
-      setErrorMessage(msg);
-    } finally {
-      setLoading(false);
+    if (selectedTab === 'text') {
+      if (!text.trim()) {
+        onError('Please enter or paste claim text before checking.');
+        return;
+      }
+      onCheck({ type: 'text', text: text.trim() });
+    } else if (selectedTab === 'url') {
+      if (!url.trim()) {
+        onError('Please enter a website link before checking.');
+        return;
+      }
+      onCheck({ type: 'url', url: url.trim() });
+    } else {
+      if (!file) {
+        onError(`Please choose a ${selectedTab} file from your device.`);
+        return;
+      }
+      onCheck({ type: selectedTab, file });
     }
   }
 
   return (
-    <div className="card space-y-4">
-      {/* Type Selector */}
-      <div className="flex flex-wrap gap-2">
-        {(['text', 'image', 'video', 'audio', 'url'] as const).map(t => (
-          <button
-            key={t}
-            className={`px-4 py-1.5 rounded-lg font-medium text-sm transition-colors border ${
-              type === t
-                ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700'
-            }`}
-            onClick={() => {
-              setType(t);
-              setErrorMessage(null);
-            }}
-          >
-            {t.toUpperCase()}
-          </button>
-        ))}
+    <div className="card space-y-5 bg-paper dark:bg-brown-900 border border-line dark:border-brown-700">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-muted dark:text-brown-300">
+          {t.step1Title}
+        </h3>
+        <span className="text-xs text-muted dark:text-brown-400">
+          Step 1 of 3
+        </span>
       </div>
 
-      {/* Input area */}
-      {type === 'text' && (
-        <div className="space-y-1">
-          <textarea
-            className="w-full h-32 p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 outline-none text-sm leading-relaxed"
-            placeholder="Paste news claim, social media post, or statement..."
+      {/* Tabs */}
+      <InputTabs
+        selectedTab={selectedTab}
+        onSelectTab={handleTabChange}
+        disabled={loading}
+        tabLabels={t.tabs}
+      />
+
+      {/* Help text for active tab */}
+      <p className="text-xs text-muted dark:text-brown-200 px-1">
+        {t.tabHelp[selectedTab]}
+      </p>
+
+      {/* Tab Panels */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {selectedTab === 'text' && (
+          <TextInput
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={setText}
+            disabled={loading}
+            placeholder={t.placeholders.text}
           />
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>{text.split(/\s+/).filter(Boolean).length} words</span>
-            <span>{text.length} characters</span>
+        )}
+
+        {selectedTab === 'url' && (
+          <LinkInput
+            value={url}
+            onChange={setUrl}
+            disabled={loading}
+            placeholder={t.placeholders.url}
+          />
+        )}
+
+        {(selectedTab === 'image' || selectedTab === 'video' || selectedTab === 'audio') && (
+          <FileDrop
+            type={selectedTab}
+            file={file}
+            onFileSelect={setFile}
+            disabled={loading}
+            t={t}
+            onError={onError}
+          />
+        )}
+
+        {/* Example chips */}
+        <ExampleChips
+          onSelect={handleExampleSelect}
+          disabled={loading}
+        />
+
+        {/* Action bar */}
+        <div className="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-line/60 dark:border-brown-800">
+          <div className="flex items-center gap-2">
+            {loading && (
+              <span className="text-xs text-muted dark:text-brown-300 italic animate-pulse">
+                {loadingMessage}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            {loading && (
+              <button
+                type="button"
+                onClick={onCancel}
+                className="btn-secondary text-xs px-4 py-2"
+              >
+                {t.buttons.cancel}
+              </button>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary text-sm px-6 py-2.5 w-full sm:w-auto shadow-sm"
+            >
+              {loading ? t.buttons.checking : t.buttons.check}
+            </button>
           </div>
         </div>
-      )}
-
-      {type === 'url' && (
-        <div className="space-y-1">
-          <input
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-            placeholder="https://example.com/article..."
-            value={url}
-            onChange={e => setUrl(e.target.value)}
-          />
-        </div>
-      )}
-
-      {['image', 'video', 'audio'].includes(type) && (
-        <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg text-center bg-gray-50 dark:bg-gray-900/50">
-          <input
-            type="file"
-            accept={`${type}/*`}
-            id="file-upload"
-            className="hidden"
-            onChange={e => setFile(e.target.files?.[0] || null)}
-          />
-          <label htmlFor="file-upload" className="cursor-pointer inline-flex flex-col items-center">
-            <span className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
-              {file ? file.name : `Select ${type} file from computer`}
-            </span>
-            <span className="text-xs text-gray-500 mt-1">
-              {file ? `${(file.size / 1024).toFixed(1)} KB` : `Supports standard ${type} formats up to 15MB`}
-            </span>
-          </label>
-        </div>
-      )}
-
-      {/* Quick Test Samples */}
-      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-gray-200 dark:border-gray-800 text-xs">
-        <span className="text-gray-500 font-medium">Quick Test Samples:</span>
-        {samples.map((s, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => applySample(s)}
-            className="px-2.5 py-1 rounded bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
-          >
-            {s.title}
-          </button>
-        ))}
-      </div>
-
-      {/* Error Message Banner */}
-      {errorMessage && (
-        <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-300 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 flex items-start justify-between">
-          <span>{errorMessage}</span>
-          <button
-            onClick={() => setErrorMessage(null)}
-            className="ml-3 font-bold hover:text-red-900 dark:hover:text-red-100"
-          >
-            ×
-          </button>
-        </div>
-      )}
-
-      {/* Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500">Language:</label>
-          <select
-            className="p-1.5 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm outline-none"
-            value={language}
-            onChange={e => setLanguage(e.target.value)}
-          >
-            <option value="en">English</option>
-            <option value="hi">Hindi (हिंदी)</option>
-            <option value="bn">Bengali (বাংলা)</option>
-            <option value="te">Telugu (తెలుగు)</option>
-            <option value="ta">Tamil (தமிழ்)</option>
-            <option value="mr">Marathi (मराठी)</option>
-            <option value="gu">Gujarati (ગુજરાતી)</option>
-            <option value="kn">Kannada (ಕನ್ನಡ)</option>
-            <option value="ml">Malayalam (മലയാളം)</option>
-            <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-            <option value="ur">Urdu (اردو)</option>
-          </select>
-        </div>
-
-        <button
-          disabled={loading}
-          onClick={submit}
-          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-lg shadow-sm transition-all"
-        >
-          {loading ? 'Verifying Content...' : 'Verify Authenticity'}
-        </button>
-      </div>
+      </form>
     </div>
   );
 }

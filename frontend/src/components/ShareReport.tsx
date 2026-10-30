@@ -1,17 +1,27 @@
-export default function ShareReport({ report }: { report: any }) {
+import React from 'react';
+import { Report, ReasonItem } from '../types';
+
+export default function ShareReport({ report }: { report: Report }) {
   async function copy() {
     try {
-      const text = `Satya Lens Report\n\nSummary: ${report.summary}\nScore: ${report.truthScore}%\nConfidence: ${Math.round((report.confidence||0)*100)}%\nLabel: ${report.label}\n\nExplanations:\n- ${(report.explanations||[]).join('\n- ')}\n\nSources:\n${(report.breakdown?.crossVerification||[]).map((s:any)=>`- ${s.source}: ${s.stance} (${Math.round((s.confidence||0)*100)}%) ${s.url}`).join('\n')}\n\nChecked with Satya Lens`;
+      const text = `Satya Lens Report\n\nVerdict: ${report.verdict.headline}\nMeaning: ${report.verdict.meaning}\nScore: ${report.verdict.score !== null ? `${report.verdict.score}/100` : 'Not scored'}\nConfidence: ${report.verdict.confidenceLevel}\n\nReasons:\n${report.reasons.map((r: ReasonItem) => `- ${r.text}`).join('\n')}\n\nChecked with Satya Lens\n${report.disclaimer}`;
       await navigator.clipboard.writeText(text);
       alert('Report copied to clipboard');
     } catch {
       alert('Copy failed');
     }
   }
+
   return (
-    <div className="card">
-      <h3 className="font-semibold mb-1">Share</h3>
-      <button className="px-3 py-2 bg-blue-600 text-white rounded" onClick={copy}>Copy Report</button>
+    <div className="card space-y-2">
+      <h3 className="font-semibold text-sm text-ink dark:text-cream">Share</h3>
+      <button
+        type="button"
+        className="btn-secondary text-xs px-3 py-1.5"
+        onClick={copy}
+      >
+        Copy Report
+      </button>
     </div>
   );
 }

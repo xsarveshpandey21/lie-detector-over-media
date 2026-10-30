@@ -1,6 +1,11 @@
-// Enhanced text claim detector with supervised microservice, LLM integration, and comprehensive NLP heuristics
+// Enhanced plain-English text detector with strict label normalization, LLM JSON mode, and honest heuristic checks
 const axios = require('axios');
+const { normalizeLabel } = require('../../utils/labels');
+const { AppError } = require('../../utils/errors');
 
+/**
+ * Classifies claim using optional local or cloud microservice
+ */
 async function classifyWithMicroservice(text) {
   const base = process.env.TEXT_MODEL_URL;
   if (!base) return null;
@@ -8,18 +13,26 @@ async function classifyWithMicroservice(text) {
     const { data } = await axios.post(
       `${base.replace(/\/$/, '')}/predict`,
       { text },
-      { timeout: 8000 }
+      { timeout: 6000 }
     );
     if (!data) return null;
-    const mapped = String(data.label || '').toLowerCase();
-    const label = mapped.includes('true') ? 'true' : mapped.includes('false') ? 'false' : 'uncertain';
+    const raw = data.label;
+    const normalized = normalizeLabel(raw);
     const confidence = Math.max(0, Math.min(1, Number(data.confidence) || 0.5));
-    return { label, confidence, rationale: 'Supervised transformer model prediction' };
+    return {
+      label: normalized,
+      confidence,
+      source: 'Local/Self-hosted Transformer Model',
+      rationale: 'Classification from self-hosted text model.'
+    };
   } catch {
     return null;
   }
 }
 
+/**
+ * Classifies claim using OpenAI with strict JSON response_format
+ */
 async function classifyWithOpenAI(text) {
   if (!process.env.OPENAI_API_KEY) return null;
   try {
@@ -30,34 +43,52 @@ async function classifyWithOpenAI(text) {
         messages: [
           {
             role: 'system',
-            content: 'You are an objective fact-checking classifier. Evaluate the veracity of the claim. Respond strictly with JSON: {"label":"True"|"False"|"Uncertain","confidence":0.0-1.0,"rationale":"Brief explanation of verification reasoning"}'
+            content: 'You are an objective text claim analyzer. Evaluate the reliability of the statement. Return valid JSON only with keys: label ("true", "false", or "uncertain"), confidence (0.0 to 1.0), and rationale (brief 1-2 sentence explanation in plain English).'
           },
-          { role: 'user', content: `Claim: ${text}` }
+          { role: 'user', content: `Claim: ${text.slice(0, 3000)}` }
         ],
+        response_format: { type: 'json_object' },
         temperature: 0
       },
       {
         headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
-        timeout: 10000
+        timeout: 9000
       }
     );
+
     const content = resp.data.choices?.[0]?.message?.content || '';
-    const match = content.match(/\{[\s\S]*\}/);
-    if (!match) return null;
-    const parsed = JSON.parse(match[0]);
-    const rawLabel = String(parsed.label || '').toLowerCase();
-    const label = rawLabel.includes('true') ? 'true' : rawLabel.includes('false') ? 'false' : 'uncertain';
-    const confidence = Math.max(0, Math.min(1, Number(parsed.confidence) || 0.5));
-    return { label, confidence, rationale: parsed.rationale || 'AI fact-checking analysis' };
+    if (!content) return null;
+
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch {
+      return null;
+    }
+
+    const normalized = normalizeLabel(parsed.label);
+    const confidence = Math.max(0, Math.min(1, Number(parsed.confidence) || 0.6));
+    const rationale = typeof parsed.rationale === 'string' ? parsed.rationale : '';
+
+    return {
+      label: normalized,
+      confidence,
+      source: 'OpenAI Language Model',
+      rationale: rationale || 'AI opinion — not checked against live sources.'
+    };
   } catch {
     return null;
   }
 }
 
-module.exports = async function detectText(text) {
-  const claim = (text || '').trim();
+module.exports = async function detectText(rawText) {
+  const claim = (rawText || '').trim();
   if (!claim) {
-    throw new Error('Claim text is empty. Please provide text to analyze.');
+    throw new AppError(400, 'empty_text', 'Please enter or paste text to check.');
+  }
+
+  if (claim.length > 5000) {
+    throw new AppError(400, 'text_too_long', 'Text is too long. Please limit text to 5,000 characters.');
   }
 
   const length = claim.length;
@@ -65,25 +96,26 @@ module.exports = async function detectText(text) {
   const wordCount = words.length;
 
   // Linguistic Pattern Analyzers
+  // Removed "hoax" and "alert" as requested to prevent false positives
   const sensationalPatterns = [
-    /\b(shocking|unbelievable|mind-blowing|you won'?t believe|miracle|magic cure)\b/i,
-    /\b(they don'?t want you to know|secret truth|hidden conspiracy|cover-up|hoax)\b/i,
-    /\b(guaranteed|100% cure|instant remedy|banned everywhere)\b/i
+    /\b(shocking|unbelievable|mind-blowing|you won'?t believe|miracle cure|magic remedy)\b/i,
+    /\b(they don'?t want you to know|secret truth|hidden conspiracy|cover-up|conspiracy)\b/i,
+    /\b(100% guaranteed|instant cure|banned everywhere|leaked secret)\b/i
   ];
 
   const viralUrgencyPatterns = [
-    /\b(share before it'?s deleted|forward to everyone|must see|wake up sheeple|repost now)\b/i,
-    /\b(urgent warning|alert|emergency announcement)\b/i
+    /\b(share before it'?s deleted|forward to everyone|forward to all|must see|wake up sheeple|repost now)\b/i,
+    /\b(urgent warning|spread this everywhere)\b/i
   ];
 
   const objectiveIndicators = [
     /\b(according to|study published in|peer-reviewed|researchers from|officials confirmed)\b/i,
-    /\b(reuters|associated press|department of|ministry of|spokesperson said)\b/i,
-    /\b(data released|quarterly report|clinical trial|preliminary findings)\b/i
+    /\b(reuters|associated press|department of|ministry of|spokesperson said|world health organization)\b/i,
+    /\b(clinical trial|preliminary findings|official statistics|court ruling)\b/i
   ];
 
   const debunkingIndicators = [
-    /\b(debunked|false claim|misleading statement|disproven by|fact-check found)\b/i
+    /\b(debunked|false claim|misleading statement|disproven by|fact-check found|hoax refuted)\b/i
   ];
 
   let sensationalHits = 0;
@@ -104,105 +136,183 @@ module.exports = async function detectText(text) {
   const uppercaseWords = words.filter(w => w.length > 2 && w === w.toUpperCase() && /^[A-Z]+$/.test(w)).length;
   const capsRatio = wordCount > 0 ? uppercaseWords / wordCount : 0;
 
-  // Compute Base Heuristic Score (0 = Fake, 100 = True)
-  let baseScore = 65; // neutral starting point
+  // Has a date or year mentioned (e.g. 2023, 2024, Monday, October)?
+  const hasDateMention = /\b(19\d\d|20\d\d|january|february|march|april|may|june|july|august|september|october|november|december|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.test(claim);
 
-  // Penalize sensationalism and spam urgency
+  // Compute Base Heuristic Score (0 to 100)
+  let baseScore = 60; // neutral starting baseline
+
+  // Penalize sensational words & urgent sharing pushes
   baseScore -= sensationalHits * 20;
   baseScore -= urgencyHits * 15;
   if (exclamationCount > 0) baseScore -= 10;
   if (capsRatio > 0.25) baseScore -= 15;
 
-  // Reward objective markers and verified citations
-  baseScore += objectiveHits * 18;
+  // Reward objective markers and verified citations (CAPPED at +20 as requested)
+  const objectiveBonus = Math.min(20, objectiveHits * 10);
+  baseScore += objectiveBonus;
 
-  // Short claims without context have higher uncertainty
-  if (wordCount < 8) {
+  // Debunking indicators: if the text mentions debunking, lower penalty
+  if (debunkHits > 0) {
+    baseScore = Math.max(50, baseScore + 15);
+  }
+
+  // Short claims without dates or context
+  if (wordCount < 10) {
     baseScore = Math.max(35, Math.min(65, baseScore));
   }
 
-  // Clamp base score between 5 and 95
-  const heuristicTruthScore = Math.max(5, Math.min(95, Math.round(baseScore)));
+  const heuristicScore = Math.max(5, Math.min(95, Math.round(baseScore)));
 
-  let heuristicLabel = 'uncertain';
-  if (heuristicTruthScore >= 70) heuristicLabel = 'true';
-  else if (heuristicTruthScore <= 40) heuristicLabel = 'false';
-
-  // Attempt external integrations (microservice or OpenAI)
+  // Try external services (microservice or OpenAI)
   const svc = await classifyWithMicroservice(claim);
   const llm = svc || await classifyWithOpenAI(claim);
 
-  let finalLabel = heuristicLabel;
-  let confidence = 0.65;
-  let finalScore = heuristicTruthScore;
+  let finalLabel = 'uncertain';
+  let confidenceLevel = 'low';
+  let finalScore = heuristicScore;
+  let headline = 'Not sure — please check more';
+  let meaning = 'We checked the style of the words, but we cannot verify whether this claim is true.';
 
   if (llm) {
-    finalLabel = llm.label;
-    confidence = Number(llm.confidence) || 0.75;
-    if (finalLabel === 'true') {
-      finalScore = Math.round(75 + confidence * 20);
-    } else if (finalLabel === 'false') {
-      finalScore = Math.round(35 - confidence * 25);
+    if (llm.label === 'false') {
+      finalLabel = 'likely_false';
+      headline = 'Likely false or misleading';
+      meaning = 'This statement contains wording and patterns common in unverified claims or misinformation.';
+      finalScore = Math.round(30 - (llm.confidence * 20));
+      confidenceLevel = llm.confidence > 0.75 ? 'high' : 'medium';
+    } else if (llm.label === 'true') {
+      finalLabel = 'likely_true';
+      headline = 'Looks reliable';
+      meaning = 'This text matches factual reporting style, though specific claims should still be checked against sources.';
+      finalScore = Math.round(70 + (llm.confidence * 20));
+      confidenceLevel = llm.confidence > 0.75 ? 'high' : 'medium';
     } else {
+      finalLabel = 'uncertain';
+      headline = 'Not sure — please check more';
+      meaning = 'We could not find enough clear evidence to verify or refute this claim.';
       finalScore = 50;
+      confidenceLevel = 'low';
     }
   } else {
-    // Confidence based on signal strength
-    const signalStrength = Math.abs(heuristicTruthScore - 50) / 50;
-    confidence = Number((0.55 + signalStrength * 0.35).toFixed(2));
+    // Pure heuristics: cap confidenceLevel at "low" or "medium" as required
+    if (heuristicScore <= 35) {
+      finalLabel = 'likely_false';
+      headline = 'Likely false or misleading';
+      meaning = 'This statement uses language typical of sensational rumours or clickbait.';
+      confidenceLevel = (sensationalHits > 1 || urgencyHits > 0) ? 'medium' : 'low';
+    } else if (heuristicScore >= 75) {
+      finalLabel = 'likely_true';
+      headline = 'Looks reliable';
+      meaning = 'This statement uses neutral, factual language with citations, but claims still need source verification.';
+      confidenceLevel = objectiveHits > 1 ? 'medium' : 'low';
+    } else {
+      finalLabel = 'uncertain';
+      headline = 'Not sure — please check more';
+      meaning = 'There is not enough clear context to tell whether this is reliable.';
+      confidenceLevel = 'low';
+    }
   }
 
-  // Format human-friendly explanations
-  const explanations = [];
-  if (llm?.rationale) {
-    explanations.push(`AI Analysis: ${llm.rationale}`);
-  }
+  // Construct plain-English reasons (using exact required translations)
+  const reasons = [];
+
+  // Plain language requirement: "Always include the reason: 'We checked writing style, not facts.'"
+  reasons.push({ tone: 'info', text: 'We checked writing style, not facts.' });
+
   if (sensationalHits > 0) {
-    explanations.push('Detected sensational or hyperbolic phrasing commonly used in clickbait.');
-  }
-  if (urgencyHits > 0) {
-    explanations.push('Contains artificial urgency markers encouraging rapid reposting without verification.');
-  }
-  if (capsRatio > 0.25 || exclamationCount > 0) {
-    explanations.push('Formatting contains excessive capitalization or dramatic punctuation.');
-  }
-  if (objectiveHits > 0) {
-    explanations.push('Includes formal attribution or references to credible institutions and studies.');
-  }
-  if (debunkHits > 0) {
-    explanations.push('Text explicitly mentions fact-checking or debunking information.');
-  }
-  if (wordCount < 10) {
-    explanations.push('Claim is brief and lacks surrounding context.');
-  }
-  if (explanations.length === 0) {
-    explanations.push('No obvious sensational flags or direct verified citations detected; further cross-referencing recommended.');
+    reasons.push({ tone: 'bad', text: 'Uses shocking words to grab attention.' });
   }
 
-  const labelText = finalLabel === 'true' ? 'likely_true' : finalLabel === 'false' ? 'likely_false' : 'uncertain';
+  if (urgencyHits > 0) {
+    reasons.push({ tone: 'bad', text: 'Pushes you to share quickly without checking.' });
+  }
+
+  if (capsRatio > 0.25 || exclamationCount > 0) {
+    reasons.push({ tone: 'warn', text: 'Uses dramatic capitalization or multiple exclamation marks (ALL-CAPS / !!!).' });
+  }
+
+  if (objectiveHits > 0) {
+    reasons.push({ tone: 'good', text: 'Names credible sources, research institutions, or official statements.' });
+  }
+
+  if (!hasDateMention && wordCount < 25) {
+    reasons.push({ tone: 'warn', text: 'Does not say when or where this happened, making it hard to verify.' });
+  }
+
+  if (debunkHits > 0) {
+    reasons.push({ tone: 'info', text: 'The text discusses fact-checking or debunking an existing claim.' });
+  }
+
+  if (llm?.rationale) {
+    reasons.push({ tone: 'info', text: `AI opinion — not checked against live sources: ${llm.rationale}` });
+  }
+
+  const nextSteps = [
+    'Search the exact claim on Google, Reuters Fact Check, or AltNews to see if it was debunked.',
+    'Ask whoever sent you this message: "Where did this originally come from?"',
+    'Do not forward or repost until you find at least one reliable news outlet that reported it.'
+  ];
+
+  const checks = [
+    { name: 'Sensationalism & clickbait language check', ran: true, note: sensationalHits > 0 ? 'Detected hype words' : 'None detected' },
+    { name: 'Viral urgency & pressure check', ran: true, note: urgencyHits > 0 ? 'Detected urgent sharing requests' : 'None detected' },
+    { name: 'Source attribution check', ran: true, note: objectiveHits > 0 ? 'Found source citations' : 'No named institutions found' },
+    { name: 'Writing style & formatting check', ran: true, note: 'Analyzed capitalization, punctuation, and length' },
+    {
+      name: 'AI language model check',
+      ran: Boolean(llm),
+      note: llm ? `Assisted by ${llm.source}` : 'Not run (no external model configured)'
+    }
+  ];
 
   return {
     type: 'text',
-    truthScore: Math.max(0, Math.min(100, finalScore)),
-    confidence: Number(confidence.toFixed(2)),
-    label: labelText,
-    explanations,
-    summary: llm
-      ? `Verified using ${svc ? 'custom model' : 'AI reasoning'} with linguistic heuristics.`
-      : 'Evaluated via comprehensive linguistic heuristics and bias indicators.',
-    breakdown: {
-      heuristics: {
-        sensationalHits,
-        urgencyHits,
-        objectiveHits,
-        capsRatio: Number(capsRatio.toFixed(2)),
-        wordCount,
-        heuristicScore: heuristicTruthScore
-      },
-      model: {
-        used: !!llm,
-        source: svc ? 'microservice' : (llm ? 'openai' : 'heuristic')
+    input: {
+      kind: 'text',
+      preview: claim.slice(0, 300) + (claim.length > 300 ? '…' : ''),
+      meta: {
+        words: wordCount,
+        chars: length
       }
-    }
+    },
+    verdict: {
+      label: finalLabel,
+      headline,
+      meaning,
+      score: finalScore,
+      confidenceLevel
+    },
+    reasons,
+    sources: {
+      status: 'not_checked', // filled in by route via crossVerify
+      items: []
+    },
+    nextSteps,
+    checks,
+    technical: {
+      wordCount,
+      length,
+      sensationalHits,
+      urgencyHits,
+      objectiveHits,
+      objectiveBonus,
+      capsRatio: Number(capsRatio.toFixed(2)),
+      exclamationCount,
+      debunkHits,
+      hasDateMention,
+      heuristicScore,
+      modelUsed: Boolean(llm),
+      modelSource: llm?.source || null
+    },
+    notices: [],
+    disclaimer: 'Satya Lens gives signals, not final proof. Always check with trusted sources.',
+
+    // Deprecated compatibility aliases
+    truthScore: finalScore,
+    confidence: confidenceLevel === 'high' ? 0.85 : confidenceLevel === 'medium' ? 0.65 : 0.45,
+    label: finalLabel,
+    summary: meaning,
+    explanations: reasons.map(r => r.text)
   };
 };

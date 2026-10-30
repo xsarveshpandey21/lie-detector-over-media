@@ -2,10 +2,14 @@ node_modules/
 backend/node_modules/
 frontend/node_modules/
 frontend/dist/
+dist/
+coverage/
 .env
-.env.local
+.env.*
+*.zip
 *.log
 .DS_Store
+artifacts/
 ml/artifacts/
+__pycache__/
 ml/__pycache__/
-

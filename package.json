@@ -6,6 +6,11 @@
   "scripts": {
     "build": "cd frontend && npm install && npm run build",
     "start": "node backend/src/server.js",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && node --test test/*.test.js",
+    "test:frontend": "cd frontend && npm run test",
+    "typecheck": "cd frontend && npm run typecheck",
+    "lint": "cd frontend && npm run lint",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"

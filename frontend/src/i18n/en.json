@@ -1,0 +1,90 @@
+{
+  "appTitle": "Satya Lens",
+  "tagline": "See what's real.",
+  "heroTitle": "Check if something online is real — in 3 easy steps.",
+  "steps": {
+    "add": "1 Add",
+    "check": "2 Check",
+    "result": "3 Read result"
+  },
+  "step1Title": "What do you want to check?",
+  "tabs": {
+    "text": "Text or message",
+    "image": "Photo",
+    "video": "Video",
+    "audio": "Voice / audio",
+    "url": "Website link"
+  },
+  "tabHelp": {
+    "text": "Paste a news statement, viral WhatsApp message, or social media claim.",
+    "image": "Upload a photo or screenshot to check format, camera tags, and editing watermarks.",
+    "video": "Upload a video file to verify format, stream validity, and deepfake signals.",
+    "audio": "Upload an audio recording to check speech cadence and voice clone signals.",
+    "url": "Enter a link to check HTTPS security, known publisher status, and lookalike risks."
+  },
+  "placeholders": {
+    "text": "Paste claim text here (up to 5,000 characters)...",
+    "url": "https://example.com/article..."
+  },
+  "dropzones": {
+    "photo": "Drop your photo here or click to choose",
+    "video": "Drop your video here or click to choose",
+    "audio": "Drop your audio file here or click to choose",
+    "limit": "Max size 4 MB"
+  },
+  "examples": {
+    "title": "Try an example:",
+    "sensational": "⚡ Sensational Rumor",
+    "factual": "📰 Factual Report",
+    "url": "🔗 Fact-Check Link"
+  },
+  "buttons": {
+    "check": "Check now",
+    "cancel": "Cancel",
+    "checking": "Checking...",
+    "remove": "Remove",
+    "copy": "Copy report",
+    "print": "Print / Save PDF",
+    "checkAnother": "Check something else",
+    "editAgain": "Edit and check again"
+  },
+  "step2Title": "What you gave us",
+  "step3Title": "What we found",
+  "headings": {
+    "confidence": "How sure are we?",
+    "score": "Authenticity Score",
+    "reasons": "Why we think this",
+    "sources": "What other sources say",
+    "nextSteps": "What you can do next",
+    "checks": "How we checked",
+    "technical": "Technical details"
+  },
+  "verdictHeadlines": {
+    "likely_true": "Looks reliable",
+    "uncertain": "Not sure — please check more",
+    "likely_false": "Likely false or misleading",
+    "scoreNull": "We can't tell from the file alone"
+  },
+  "confidenceLevels": {
+    "low": "Low confidence",
+    "medium": "Medium confidence",
+    "high": "High confidence",
+    "tooltip": "This shows how strong our evidence is, not whether the content is true."
+  },
+  "sourcesEmpty": {
+    "notChecked": "Fact-check search is turned off in this version (no Google Fact Check API key configured).",
+    "noMatches": "We did not find any published fact-checks for this claim. That does not mean it is true."
+  },
+  "disclaimer": "Satya Lens gives signals, not final proof. Always check with trusted sources.",
+  "privacyNote": "We do not store what you check. Files are held in memory during analysis and never saved to disk.",
+  "emptyState": {
+    "howItWorks": "How Satya Lens works",
+    "card1Title": "1. Add your content",
+    "card1Desc": "Paste a claim, drop a photo or recording, or enter a web link.",
+    "card2Title": "2. We check signals",
+    "card2Desc": "We examine writing style, camera headers, domain reputation, and fact-checking archives.",
+    "card3Title": "3. You decide",
+    "card3Desc": "Read plain-English explanations and next steps so you can judge with confidence."
+  }
+}
+
