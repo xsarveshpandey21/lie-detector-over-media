@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import VerdictBanner from '../components/VerdictBanner';
+import ScoreBar from '../components/ScoreBar';
 import { Verdict } from '../types';
 
 describe('VerdictBanner Component', () => {
@@ -49,5 +50,17 @@ describe('VerdictBanner Component', () => {
 
     expect(screen.getByText('High signs of misinformation')).toBeInTheDocument();
     expect(screen.getByText('Misleading or False')).toBeInTheDocument();
+  });
+
+  it('renders "Not scored" when score is null in ScoreBar', () => {
+    render(<ScoreBar score={null} />);
+    expect(screen.getByText('Not scored')).toBeInTheDocument();
+    expect(screen.getByText(/File headers alone cannot guarantee authenticity/i)).toBeInTheDocument();
+  });
+
+  it('renders numeric score when score is provided in ScoreBar', () => {
+    render(<ScoreBar score={85} />);
+    expect(screen.getByText('85')).toBeInTheDocument();
+    expect(screen.getByText('/ 100')).toBeInTheDocument();
   });
 });

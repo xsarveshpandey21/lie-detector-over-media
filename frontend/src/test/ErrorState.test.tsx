@@ -56,3 +56,4 @@ describe('ErrorState Component', () => {
     expect(screen.getByText(/Please provide text, a link, or select a file/i)).toBeInTheDocument();
   });
 });
+

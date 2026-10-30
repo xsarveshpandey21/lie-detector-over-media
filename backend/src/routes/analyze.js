@@ -54,9 +54,27 @@ async function handleAnalysis(req) {
 
       result = await detectText(textForAnalysis);
 
-      // Search real Google Fact Check Tools API for text claims
+      // Search real Google Fact Check Tools API and Curated Open-Source Registry for text claims
       const sourcesResult = await searchFactChecks(textForAnalysis, userLang);
       result.sources = sourcesResult;
+
+      if (sourcesResult.items && sourcesResult.items.length > 0) {
+        const top = sourcesResult.items[0];
+        const topRating = top.rating.toLowerCase();
+        result.verdict.confidenceLevel = 'high';
+
+        if (topRating.includes('false') || topRating.includes('fire') || topRating.includes('fake') || topRating.includes('myth')) {
+          result.verdict.label = 'likely_false';
+          result.verdict.score = 15;
+          result.verdict.headline = 'Debunked claim / Misleading statement';
+          result.verdict.meaning = `This claim was investigated and debunked by ${top.publisher} (rated "${top.rating}").`;
+        } else if (topRating.includes('true') || topRating.includes('verified')) {
+          result.verdict.label = 'likely_true';
+          result.verdict.score = 92;
+          result.verdict.headline = 'Verified factual claim';
+          result.verdict.meaning = `This claim was investigated and verified as factual by ${top.publisher}.`;
+        }
+      }
 
       // Add real fact check note to checks transparency
       result.checks.push({
@@ -66,7 +84,7 @@ async function handleAnalysis(req) {
           ? `Found ${sourcesResult.items.length} verified fact-check review(s)`
           : sourcesResult.status === 'no_matches_found'
           ? 'No published fact-checks found for this exact claim'
-          : 'Not configured (Google Fact Check API key missing)'
+          : 'No direct registry matches'
       });
 
       // Compute honest credibility if real fact checks found

@@ -6,7 +6,29 @@ interface ScoreBarProps {
 }
 
 export default function ScoreBar({ score }: ScoreBarProps) {
-  if (score === null || score === undefined) return null;
+  if (score === null || score === undefined) {
+    return (
+      <div className="card space-y-2.5 bg-paper dark:bg-brown-900 border border-line dark:border-brown-700">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h4 className="text-sm font-bold font-heading text-ink dark:text-cream">
+              Reliability Score
+            </h4>
+            <HelpTooltip
+              label="Reliability Score"
+              text="A numeric score is computed when verified fact-checks, linguistic patterns, or domain reputation signals exist."
+            />
+          </div>
+          <span className="font-semibold text-xs px-2.5 py-1 rounded-md bg-sand dark:bg-brown-800 text-muted dark:text-brown-300">
+            Not scored
+          </span>
+        </div>
+        <p className="text-xs text-muted dark:text-brown-300">
+          File headers alone cannot guarantee authenticity. Review the camera provenance and file technical details below.
+        </p>
+      </div>
+    );
+  }
 
   const boundedScore = Math.max(0, Math.min(100, score));
 
@@ -53,4 +75,3 @@ export default function ScoreBar({ score }: ScoreBarProps) {
     </div>
   );
 }
-

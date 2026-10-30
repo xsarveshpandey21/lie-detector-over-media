@@ -30,3 +30,4 @@ describe('normalizeLabel helper', () => {
     assert.strictEqual(normalizeLabel('cannot determine'), 'uncertain');
   });
 });
+

@@ -221,7 +221,7 @@ module.exports = async function detectUrl(rawUrl) {
   } else {
     label = 'uncertain';
     score = 55;
-    confidenceLevel = 'low';
+    confidenceLevel = 'medium';
     headline = 'Standard website link';
     meaning = 'This is a normal website address. Check who wrote the story and when it was published.';
     reasons.push({ tone: 'info', text: `Domain: ${host}` });
@@ -262,7 +262,9 @@ module.exports = async function detectUrl(rawUrl) {
     technical: {
       domain: host,
       https,
+      securityProtocol: https ? 'TLS / HTTPS Encrypted' : 'Unencrypted HTTP',
       pathDepth,
+      reputationCategory: isTrusted ? 'Trusted News / Official' : isSatire ? 'Satire / Parody' : isLowCred ? 'Low Credibility' : isShortener ? 'URL Shortener' : 'Standard Web Domain',
       isIpAddress,
       isPunycode,
       isTrusted,

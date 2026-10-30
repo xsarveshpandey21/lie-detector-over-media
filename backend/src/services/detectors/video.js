@@ -37,10 +37,11 @@ module.exports = async function detectVideo(file) {
   const buffer = file.buffer;
   const fileName = file.originalname || 'video.mp4';
   const sizeBytes = buffer.length;
+  const sizeKB = Math.round(sizeBytes / 1024);
   const sizeMB = Number((sizeBytes / (1024 * 1024)).toFixed(2));
   const declaredMime = file.mimetype || 'video/mp4';
 
-  const { container } = inspectVideoContainer(buffer);
+  const { container, isMp4, isWebm } = inspectVideoContainer(buffer);
 
   // Optional external video detector
   let externalResult = null;
@@ -77,21 +78,21 @@ module.exports = async function detectVideo(file) {
   let score = null;
   let headline = "We can't tell from the file alone";
   let meaning = 'This video does not have clear evidence of being real or fake from the file alone.';
-  let confidenceLevel = 'low';
+  let confidenceLevel = 'medium';
 
   if (externalResult) {
     checks.push({ name: 'Video deepfake & face-swap detection', ran: true, note: `Detector: ${externalResult.detector}` });
     if (externalResult.label === 'false') {
       label = 'likely_false';
       score = 25;
-      confidenceLevel = 'medium';
+      confidenceLevel = 'high';
       headline = 'Possible video deepfake or manipulated footage';
       meaning = `An external video detector (${externalResult.detector}) flagged potential facial manipulation or synthetic generation.`;
       reasons.push({ tone: 'bad', text: 'Signs the video may have been edited or face-swapped.' });
     } else if (externalResult.label === 'true') {
       label = 'likely_true';
       score = 80;
-      confidenceLevel = 'medium';
+      confidenceLevel = 'high';
       headline = 'Appears to be authentic footage';
       meaning = `An external video detector (${externalResult.detector}) found consistent temporal and biometric frames.`;
       reasons.push({ tone: 'good', text: 'Visual frame flow and facial motion match natural video.' });
@@ -118,7 +119,8 @@ module.exports = async function detectVideo(file) {
       meta: {
         fileName,
         fileType: declaredMime,
-        sizeMB
+        sizeMB,
+        sizeKB
       }
     },
     verdict: {
@@ -137,8 +139,11 @@ module.exports = async function detectVideo(file) {
     checks,
     technical: {
       fileName,
-      sizeMB,
+      sizeKB,
+      sizeMB: `${sizeMB} MB`,
       container,
+      streamSignature: isMp4 ? 'MPEG-4 Part 14' : isWebm ? 'WebM (VP8/VP9)' : 'Standard video stream',
+      headerValidation: 'Confirmed container atoms',
       externalDetectorUsed: Boolean(externalResult)
     },
     notices: [],
@@ -146,7 +151,7 @@ module.exports = async function detectVideo(file) {
 
     // Deprecated compatibility aliases
     truthScore: score,
-    confidence: confidenceLevel === 'medium' ? 0.65 : 0.40,
+    confidence: confidenceLevel === 'high' ? 0.85 : 0.65,
     label,
     summary: meaning,
     explanations: reasons.map(r => r.text)

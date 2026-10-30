@@ -60,3 +60,4 @@ describe('InputSummaryCard Component', () => {
     expect(screen.getByText(/image\/png • 245 KB/i)).toBeInTheDocument();
   });
 });
+
