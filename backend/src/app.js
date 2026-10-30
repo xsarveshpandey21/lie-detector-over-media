@@ -12,6 +12,9 @@ dotenv.config();
 
 const app = express();
 
+// Trust reverse proxies (Vercel, Cloudflare, etc.) for client IP and rate limiting
+app.set('trust proxy', 1);
+
 // Security headers with helmet
 app.use(helmet({
   contentSecurityPolicy: false, // Allows Vite inline styles & loaded fonts
@@ -19,31 +22,45 @@ app.use(helmet({
 }));
 
 // CORS configuration: restrict to ALLOWED_ORIGIN or same-origin in production
-const allowedOriginsEnv = process.env.ALLOWED_ORIGIN;
-const allowedOrigins = allowedOriginsEnv
-  ? allowedOriginsEnv.split(',').map(o => o.trim()).filter(Boolean)
-  : null;
+app.use((req, res, next) => {
+  const allowedOriginsEnv = process.env.ALLOWED_ORIGIN;
+  const allowedOrigins = allowedOriginsEnv
+    ? allowedOriginsEnv.split(',').map(o => o.trim()).filter(Boolean)
+    : null;
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl, server-to-server)
-    if (!origin) return callback(null, true);
-    if (!allowedOrigins) {
-      // In dev or without explicit ALLOWED_ORIGIN, allow all
+  return cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins) {
+        if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+          return callback(null, true);
+        }
+        return callback(new AppError(403, 'cors_forbidden', 'Cross-origin request not allowed.'));
+      }
+
+      // In dev without explicit ALLOWED_ORIGIN, allow all
       if (process.env.NODE_ENV !== 'production') {
         return callback(null, true);
       }
-      // In production without ALLOWED_ORIGIN, same-origin only
-      return callback(null, true);
-    }
-    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
-      return callback(null, true);
-    }
-    return callback(new AppError(403, 'cors_forbidden', 'Cross-origin request not allowed.'));
-  },
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
-}));
+
+      // In production without ALLOWED_ORIGIN, allow same-origin only
+      const host = req.headers.host;
+      try {
+        const originUrl = new URL(origin);
+        if (host && originUrl.host === host) {
+          return callback(null, true);
+        }
+      } catch {
+        // invalid URL
+      }
+      return callback(new AppError(403, 'cors_forbidden', 'Cross-origin request not allowed.'));
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+  })(req, res, next);
+});
 
 // Rate limiting: 30 requests / 15 minutes / IP (configurable)
 const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;

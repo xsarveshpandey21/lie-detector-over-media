@@ -59,20 +59,23 @@ async function handleAnalysis(req) {
       result.sources = sourcesResult;
 
       if (sourcesResult.items && sourcesResult.items.length > 0) {
-        const top = sourcesResult.items[0];
-        const topRating = top.rating.toLowerCase();
-        result.verdict.confidenceLevel = 'high';
+        // ONLY live Google Fact Check API matches may override verdict or set confidenceLevel to 'high'
+        if (sourcesResult.source === 'google_api') {
+          const top = sourcesResult.items[0];
+          const topRating = top.rating.toLowerCase();
+          result.verdict.confidenceLevel = 'high';
 
-        if (topRating.includes('false') || topRating.includes('fire') || topRating.includes('fake') || topRating.includes('myth')) {
-          result.verdict.label = 'likely_false';
-          result.verdict.score = 15;
-          result.verdict.headline = 'Debunked claim / Misleading statement';
-          result.verdict.meaning = `This claim was investigated and debunked by ${top.publisher} (rated "${top.rating}").`;
-        } else if (topRating.includes('true') || topRating.includes('verified')) {
-          result.verdict.label = 'likely_true';
-          result.verdict.score = 92;
-          result.verdict.headline = 'Verified factual claim';
-          result.verdict.meaning = `This claim was investigated and verified as factual by ${top.publisher}.`;
+          if (topRating.includes('false') || topRating.includes('fire') || topRating.includes('fake') || topRating.includes('myth')) {
+            result.verdict.label = 'likely_false';
+            result.verdict.score = 15;
+            result.verdict.headline = 'Debunked claim / Misleading statement';
+            result.verdict.meaning = `This claim was investigated and debunked by ${top.publisher} (rated "${top.rating}").`;
+          } else if (topRating.includes('true') || topRating.includes('verified')) {
+            result.verdict.label = 'likely_true';
+            result.verdict.score = 92;
+            result.verdict.headline = 'Verified factual claim';
+            result.verdict.meaning = `This claim was investigated and verified as factual by ${top.publisher}.`;
+          }
         }
       }
 
@@ -81,7 +84,9 @@ async function handleAnalysis(req) {
         name: 'Fact-checking registry search',
         ran: sourcesResult.status !== 'not_checked',
         note: sourcesResult.status === 'checked'
-          ? `Found ${sourcesResult.items.length} verified fact-check review(s)`
+          ? (sourcesResult.source === 'google_api'
+            ? `Found ${sourcesResult.items.length} verified live fact-check review(s)`
+            : `Found ${sourcesResult.items.length} similar claim(s) previously fact-checked`)
           : sourcesResult.status === 'no_matches_found'
           ? 'No published fact-checks found for this exact claim'
           : 'No direct registry matches'

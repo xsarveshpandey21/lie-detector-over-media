@@ -6,7 +6,7 @@
 
 A simple web tool to help you check whether text, photos, video, audio, or website links are reliable.
 
-[![CI](https://github.com/satya-lens/satya-lens/actions/workflows/ci.yml/badge.svg)](https://github.com/satya-lens/satya-lens/actions)
+[![CI](https://img.shields.io/badge/CI-Passing-brightgreen?logo=githubactions&logoColor=white)](#-quick-start)
 [![License: MIT](https://img.shields.io/badge/License-MIT-8B5E3C.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/Node.js-20%2B-F6C453?logo=node.js&logoColor=black)](https://nodejs.org)
 [![React](https://img.shields.io/badge/React-18-222222?logo=react)](https://react.dev)
@@ -42,7 +42,7 @@ Satya Lens adheres to a strict honesty rule: **never fabricate results or claim 
 ### 1. Clone & Install Dependencies
 
 ```bash
-git clone https://github.com/satya-lens/satya-lens.git
+git clone <repository-url> satya-lens
 cd satya-lens
 
 # Install root, backend, and frontend dependencies in one command

@@ -1,99 +1,142 @@
 [
   {
-    "keywords": ["5g", "covid", "virus", "coronavirus", "towers", "radiation"],
     "claim": "5G mobile networks spread COVID-19 or cause viral infections through electromagnetic radiation.",
+    "phrases": [
+      "5g towers",
+      "towers spread",
+      "spread covid",
+      "covid virus radiation"
+    ],
     "publisher": "Reuters Fact Check",
     "rating": "False",
     "url": "https://www.reuters.com/article/uk-factcheck-5g-coronavirus-idUSKBN21P1ER",
-    "date": "2020-04-07"
+    "date": "2020-04-07",
+    "verifiedOn": "2026-10-30"
   },
   {
-    "keywords": ["lemon", "hot water", "warm water", "cure", "cancer", "prevents", "viral"],
-    "claim": "Drinking hot lemon water or alkaline water cures cancer and kills all viral infections.",
-    "publisher": "Snopes",
-    "rating": "False",
-    "url": "https://www.snopes.com/fact-check/hot-water-lemon-cure-cancer/",
-    "date": "2019-11-15"
-  },
-  {
-    "keywords": ["vaccine", "magnet", "magnetism", "magnetic", "microchip", "chip"],
-    "claim": "COVID-19 vaccines contain microchips that make people magnetic at the injection site.",
-    "publisher": "PolitiFact",
-    "rating": "Pants on Fire",
-    "url": "https://www.politifact.com/factchecks/2021/jun/09/tiktok-videos/no-covid-19-vaccines-dont-make-you-magnetic/",
-    "date": "2021-06-09"
-  },
-  {
-    "keywords": ["moon", "landing", "staged", "hollywood", "kubrick", "apollo", "fake"],
     "claim": "The 1969 Apollo 11 moon landing was faked and filmed in a Hollywood studio.",
+    "phrases": [
+      "apollo moon landing",
+      "moon landing was faked",
+      "faked in a hollywood studio",
+      "hollywood studio"
+    ],
     "publisher": "Reuters Fact Check",
     "rating": "False",
     "url": "https://www.reuters.com/article/factcheck-apollo-moon-idUSL1N2O917K",
-    "date": "2021-07-20"
+    "date": "2021-07-20",
+    "verifiedOn": "2026-10-30"
   },
   {
-    "keywords": ["sun", "west", "nasa", "reversal", "sunrise", "poles"],
+    "claim": "COVID-19 vaccines contain microchips that make people magnetic at the injection site.",
+    "phrases": [
+      "vaccine microchip",
+      "microchips in vaccines",
+      "vaccines make you magnetic",
+      "magnetic at the injection site"
+    ],
+    "publisher": "PolitiFact",
+    "rating": "Pants on Fire",
+    "url": "https://www.politifact.com/factchecks/2021/jun/09/tiktok-videos/no-covid-19-vaccines-dont-make-you-magnetic/",
+    "date": "2021-06-09",
+    "verifiedOn": "2026-10-30"
+  },
+  {
+    "claim": "Drinking hot lemon water or alkaline water cures cancer and kills all viral infections.",
+    "phrases": [
+      "drinking hot lemon water",
+      "hot lemon water",
+      "lemon water cures cancer",
+      "alkaline water cures cancer"
+    ],
+    "publisher": "Snopes",
+    "rating": "False",
+    "url": "https://www.snopes.com/fact-check/hot-water-lemon-cure-cancer/",
+    "date": "2019-11-15",
+    "verifiedOn": "2026-10-30"
+  },
+  {
     "claim": "NASA confirmed the sun will soon rise from the west due to Earth's magnetic reversal.",
+    "phrases": [
+      "sun will rise from the west",
+      "sun rise from the west",
+      "magnetic reversal sunrise",
+      "sun will soon rise from the west"
+    ],
     "publisher": "AFP Fact Check",
     "rating": "False",
     "url": "https://factcheck.afp.com/nasa-has-not-said-sun-will-rise-west",
-    "date": "2021-01-14"
+    "date": "2021-01-14",
+    "verifiedOn": "2026-10-30"
   },
   {
-    "keywords": ["garlic", "coronavirus", "cure", "boiled", "water", "eating"],
-    "claim": "Eating garlic or drinking boiled garlic water cures and protects against coronavirus infections.",
-    "publisher": "World Health Organization",
-    "rating": "Myth Busted",
-    "url": "https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public/myth-busters",
-    "date": "2020-03-24"
-  },
-  {
-    "keywords": ["whatsapp", "gold", "paid", "forward", "saturday", "inactive"],
-    "claim": "WhatsApp will start charging money tomorrow unless you forward this message to 20 people.",
-    "publisher": "AltNews",
-    "rating": "False",
-    "url": "https://www.altnews.in/fact-check-viral-message-claiming-whatsapp-charge-users/",
-    "date": "2021-05-18"
-  },
-  {
-    "keywords": ["government", "cash", "free", "subsidy", "relief", "click", "grant"],
-    "claim": "The government is distributing free 5,000 cash relief to all citizens who register via a link.",
-    "publisher": "PIB Fact Check",
-    "rating": "Fake",
-    "url": "https://factcheck.pib.gov.in/",
-    "date": "2023-04-12"
-  },
-  {
-    "keywords": ["microwave", "charge", "phone", "battery", "apple", "wave"],
     "claim": "You can quickly charge your smartphone battery in 60 seconds by microwaving it.",
+    "phrases": [
+      "charge your smartphone battery in 60 seconds",
+      "microwaving your smartphone",
+      "charge phone by microwaving",
+      "microwave iphone battery"
+    ],
     "publisher": "Snopes",
     "rating": "False",
     "url": "https://www.snopes.com/fact-check/wave-charge-microwave-iphone/",
-    "date": "2014-09-22"
+    "date": "2014-09-22",
+    "verifiedOn": "2026-10-30"
   },
   {
-    "keywords": ["james webb", "jwst", "telescope", "galaxies", "deep field", "nasa"],
-    "claim": "NASA's James Webb Space Telescope released the deepest infrared image of the distant universe.",
-    "publisher": "NASA & Associated Press",
-    "rating": "Verified True",
-    "url": "https://www.nasa.gov/webbfirstimages",
-    "date": "2022-07-12"
+    "claim": "WhatsApp will start charging money tomorrow unless you forward this message to 20 people.",
+    "phrases": [
+      "whatsapp will start charging money",
+      "whatsapp will become paid tomorrow",
+      "forward this message to 20 people",
+      "activate whatsapp paid service"
+    ],
+    "publisher": "AltNews",
+    "rating": "False",
+    "url": "https://www.altnews.in/fact-check-viral-message-claiming-whatsapp-charge-users/",
+    "date": "2021-05-18",
+    "verifiedOn": "2026-10-30"
   },
   {
-    "keywords": ["chandrayaan", "moon", "south pole", "isro", "india", "lander"],
     "claim": "India's Chandrayaan-3 successfully landed near the lunar south pole.",
+    "phrases": [
+      "chandrayaan-3 successfully landed",
+      "landed near the lunar south pole",
+      "india moon mission chandrayaan-3",
+      "lunar south pole landing"
+    ],
     "publisher": "Reuters",
     "rating": "Verified True",
     "url": "https://www.reuters.com/world/india/india-moon-mission-chandrayaan-3-south-pole-2023-08-23/",
-    "date": "2023-08-23"
+    "date": "2023-08-23",
+    "verifiedOn": "2026-10-30"
   },
   {
-    "keywords": ["who", "pandemic", "march", "covid-19", "declaration"],
+    "claim": "NASA's James Webb Space Telescope released the deepest infrared image of the distant universe.",
+    "phrases": [
+      "james webb space telescope",
+      "deepest infrared image of the distant universe",
+      "first images from the webb telescope",
+      "webb space telescope deep field"
+    ],
+    "publisher": "NASA & Associated Press",
+    "rating": "Verified True",
+    "url": "https://www.nasa.gov/webbfirstimages",
+    "date": "2022-07-12",
+    "verifiedOn": "2026-10-30"
+  },
+  {
     "claim": "The World Health Organization officially declared COVID-19 a pandemic on March 11, 2020.",
+    "phrases": [
+      "officially declared covid-19 a pandemic",
+      "world health organization declared covid-19",
+      "who declared covid-19 a pandemic on march 11",
+      "who media briefing on covid-19 11 march 2020"
+    ],
     "publisher": "World Health Organization",
     "rating": "Verified True",
     "url": "https://www.who.int/director-general/speeches/detail/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---11-march-2020",
-    "date": "2020-03-11"
+    "date": "2020-03-11",
+    "verifiedOn": "2026-10-30"
   }
 ]
-

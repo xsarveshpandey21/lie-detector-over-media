@@ -77,6 +77,14 @@
   },
   "disclaimer": "Satya Lens gives signals, not final proof. Always check with trusted sources.",
   "privacyNote": "We do not store what you check. Files are held in memory during analysis and never saved to disk.",
+  "stepBadge1": "Step 1 of 3",
+  "stepBadge3": "Step 3 of 3",
+  "footer": {
+    "title": "Satya Lens • See what's real.",
+    "tagline": "An open educational tool providing signals to help you judge content reliability. Never a substitute for critical thinking.",
+    "privacy": "Privacy: Zero-Storage in Memory",
+    "github": "GitHub"
+  },
   "emptyState": {
     "howItWorks": "How Satya Lens works",
     "card1Title": "1. Add your content",

@@ -1,7 +1,7 @@
 // Real fact-checking verification via Google Fact Check Tools API and Curated Open-Source Registry
 const axios = require('axios');
 const crypto = require('crypto');
-const factCheckData = require('../data/factChecks.json');
+const { matchLocalFactChecks } = require('../utils/factCheckMatcher');
 
 // 10-minute in-memory cache: hash -> { status, items, timestamp }
 const cache = new Map();
@@ -13,7 +13,7 @@ const CACHE_TTL_MS = 10 * 60 * 1000;
  *
  * @param {string} text - Claim text to search
  * @param {string} [languageCode='en'] - Language code (e.g. 'en', 'hi')
- * @returns {Promise<{ status: 'checked'|'not_checked'|'no_matches_found', items: Array<{ publisher: string, rating: string, claim: string, url: string, date: string }> }>}
+ * @returns {Promise<{ status: 'checked'|'not_checked'|'no_matches_found', source?: 'google_api'|'local_registry', items: Array<object> }>}
  */
 async function searchFactChecks(text, languageCode = 'en') {
   const claim = (text || '').trim().slice(0, 200);
@@ -27,7 +27,7 @@ async function searchFactChecks(text, languageCode = 'en') {
   const hash = crypto.createHash('sha256').update(`${claim}:${languageCode}:${Boolean(apiKey)}`).digest('hex');
   const cached = cache.get(hash);
   if (cached && (Date.now() - cached.timestamp < CACHE_TTL_MS)) {
-    return { status: cached.status, items: cached.items };
+    return { status: cached.status, source: cached.source, items: cached.items };
   }
 
   // 1. If Google Fact Check API key is available, query live API
@@ -54,12 +54,13 @@ async function searchFactChecks(text, languageCode = 'en') {
               rating: rev.textualRating || 'Unrated',
               claim: c.text || claim,
               url: rev.url || '',
-              date: rev.reviewDate ? rev.reviewDate.split('T')[0] : ''
+              date: rev.reviewDate ? rev.reviewDate.split('T')[0] : '',
+              isLiveApi: true
             });
           }
         }
         if (items.length > 0) {
-          const result = { status: 'checked', items: items.slice(0, 5) };
+          const result = { status: 'checked', source: 'google_api', items: items.slice(0, 5) };
           cache.set(hash, { ...result, timestamp: Date.now() });
           return result;
         }
@@ -69,30 +70,14 @@ async function searchFactChecks(text, languageCode = 'en') {
     }
   }
 
-  // 2. Query Curated Open-Source Verified Fact-Check Knowledge Base
-  const lowerClaim = claim.toLowerCase();
-  const localMatched = [];
-  for (const item of factCheckData) {
-    let hits = 0;
-    for (const kw of item.keywords) {
-      if (lowerClaim.includes(kw.toLowerCase())) {
-        hits++;
-      }
-    }
-    const threshold = item.keywords.length <= 4 ? 1 : 2;
-    if (hits >= threshold) {
-      localMatched.push({
-        publisher: item.publisher,
-        rating: item.rating,
-        claim: item.claim,
-        url: item.url,
-        date: item.date
-      });
-    }
-  }
-
+  // 2. Query Curated Open-Source Verified Fact-Check Knowledge Base using shared matcher
+  const localMatched = matchLocalFactChecks(claim);
   if (localMatched.length > 0) {
-    const result = { status: 'checked', items: localMatched.slice(0, 5) };
+    const result = {
+      status: 'checked',
+      source: 'local_registry',
+      items: localMatched.slice(0, 5)
+    };
     cache.set(hash, { ...result, timestamp: Date.now() });
     return result;
   }

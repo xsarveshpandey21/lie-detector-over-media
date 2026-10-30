@@ -116,7 +116,7 @@ export default function App() {
                   {t.step3Title}
                 </h3>
                 <span className="text-xs text-muted dark:text-brown-400">
-                  Step 3 of 3
+                  {t.stepBadge3}
                 </span>
               </div>
 
@@ -170,22 +170,26 @@ export default function App() {
       {/* Footer */}
       <footer className="mt-12 py-6 border-t border-line dark:border-brown-700 bg-sand/40 dark:bg-brown-950 text-center text-xs text-muted dark:text-brown-300 space-y-2">
         <p className="font-semibold text-ink dark:text-cream">
-          Satya Lens &bull; See what&apos;s real.
+          {t.footer.title}
         </p>
         <p className="max-w-md mx-auto">
-          An open educational tool providing signals to help you judge content reliability. Never a substitute for critical thinking.
+          {t.footer.tagline}
         </p>
         <div className="flex items-center justify-center gap-4 pt-1">
-          <a
-            href="https://github.com/satya-lens/satya-lens"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-brown-700 dark:hover:text-yellow-300 underline underline-offset-2"
-          >
-            GitHub
-          </a>
-          <span>&bull;</span>
-          <span>Privacy: Zero-Storage in Memory</span>
+          {import.meta.env.VITE_GITHUB_URL && (
+            <>
+              <a
+                href={import.meta.env.VITE_GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-brown-700 dark:hover:text-yellow-300 underline underline-offset-2"
+              >
+                {t.footer.github}
+              </a>
+              <span>&bull;</span>
+            </>
+          )}
+          <span>{t.footer.privacy}</span>
         </div>
       </footer>
 

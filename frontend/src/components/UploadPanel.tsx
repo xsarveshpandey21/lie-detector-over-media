@@ -19,6 +19,7 @@ interface UploadPanelProps {
   onError: (msg: string) => void;
   t: {
     step1Title: string;
+    stepBadge1?: string;
     tabs: Record<ContentType, string>;
     tabHelp: Record<ContentType, string>;
     placeholders: {
@@ -110,7 +111,7 @@ export default function UploadPanel({
           {t.step1Title}
         </h3>
         <span className="text-xs text-muted dark:text-brown-400">
-          Step 1 of 3
+          {t.stepBadge1 || 'Step 1 of 3'}
         </span>
       </div>
 

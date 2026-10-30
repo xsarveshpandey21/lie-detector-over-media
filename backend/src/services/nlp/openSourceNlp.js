@@ -1,5 +1,5 @@
 // Open-source NLP credibility and feature extraction engine
-const factCheckData = require('../../data/factChecks.json');
+const { matchLocalFactChecks } = require('../../utils/factCheckMatcher');
 
 /**
  * Counts syllables in an English word using vowel cluster heuristics
@@ -76,73 +76,30 @@ function analyzeTextNlp(text) {
   const objectiveHits = (cleanText.match(objectiveRegex) || []).length;
   const sourceAttributionScore = Number(Math.min(1, objectiveHits * 0.35).toFixed(2));
 
-  // Check Local Verified Fact-Check Knowledge Base
-  const lowerText = cleanText.toLowerCase();
-  const matchedFactChecks = [];
+  // Check Local Verified Fact-Check Knowledge Base using shared matcher
+  const matchedFactChecks = matchLocalFactChecks(cleanText);
 
-  for (const item of factCheckData) {
-    let hitCount = 0;
-    for (const kw of item.keywords) {
-      if (lowerText.includes(kw.toLowerCase())) {
-        hitCount++;
-      }
-    }
-    // If at least 2 distinct keywords match (or 1 if keywords list is small)
-    const threshold = item.keywords.length <= 4 ? 1 : 2;
-    if (hitCount >= threshold) {
-      matchedFactChecks.push({
-        claim: item.claim,
-        publisher: item.publisher,
-        rating: item.rating,
-        url: item.url,
-        date: item.date
-      });
-    }
-  }
-
-  // Calculate Base Score (0 - 100)
+  // Calculate Base Score (0 - 100) from linguistic features
   let score = 65; // balanced baseline
   score -= clickbaitScore * 45;
   score -= emotionalIntensity * 20;
   score -= subjectivityIndex * 15;
   score += sourceAttributionScore * 30;
 
-  // If matched fact checks, adjust strongly towards the verified rating
-  if (matchedFactChecks.length > 0) {
-    const topCheck = matchedFactChecks[0];
-    const ratingLower = topCheck.rating.toLowerCase();
-    if (ratingLower.includes('false') || ratingLower.includes('fire') || ratingLower.includes('fake') || ratingLower.includes('myth')) {
-      score = Math.min(score, 20);
-    } else if (ratingLower.includes('true') || ratingLower.includes('verified')) {
-      score = Math.max(score, 88);
-    }
-  }
-
   score = Math.max(5, Math.min(95, Math.round(score)));
 
-  // Calculate Label and Justified Confidence
+  // Calculate Label and Confidence from linguistic features
+  // (Local registry match does NOT override verdict or set confidenceLevel to high)
   let label = 'uncertain';
   let confidenceLevel = 'low';
 
-  if (matchedFactChecks.length > 0) {
-    // We have direct verified fact checks! High confidence.
-    confidenceLevel = 'high';
-    const topRating = matchedFactChecks[0].rating.toLowerCase();
-    if (topRating.includes('false') || topRating.includes('fire') || topRating.includes('fake') || topRating.includes('myth')) {
-      label = 'likely_false';
-    } else if (topRating.includes('true') || topRating.includes('verified')) {
-      label = 'likely_true';
-    } else {
-      label = 'uncertain';
-    }
-  } else if (clickbaitScore >= 0.4 || emotionalIntensity >= 0.5) {
+  if (clickbaitScore >= 0.4 || emotionalIntensity >= 0.5) {
     label = 'likely_false';
-    confidenceLevel = clickbaitScore >= 0.6 ? 'high' : 'medium';
+    confidenceLevel = clickbaitScore >= 0.6 ? 'medium' : 'low';
   } else if (sourceAttributionScore >= 0.5 && clickbaitScore <= 0.1) {
     label = 'likely_true';
-    confidenceLevel = sourceAttributionScore >= 0.7 ? 'high' : 'medium';
+    confidenceLevel = 'medium';
   } else if (wordCount >= 15 && clickbaitScore < 0.25) {
-    // Normal informative text with decent length
     label = 'likely_true';
     confidenceLevel = 'medium';
   } else {
@@ -177,4 +134,3 @@ module.exports = {
   analyzeTextNlp,
   countSyllables
 };
-

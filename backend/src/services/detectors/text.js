@@ -126,25 +126,8 @@ module.exports = async function detectText(rawText) {
       finalScore = 50;
       confidenceLevel = 'medium';
     }
-  } else if (matchedFactChecks.length > 0) {
-    // Matched verified fact check in curated database!
-    const top = matchedFactChecks[0];
-    const topRating = top.rating.toLowerCase();
-    if (topRating.includes('false') || topRating.includes('fire') || topRating.includes('fake') || topRating.includes('myth')) {
-      finalLabel = 'likely_false';
-      headline = 'Debunked claim / Misleading statement';
-      meaning = `This claim matches a statement debunked by ${top.publisher} ("${top.rating}").`;
-      finalScore = 18;
-      confidenceLevel = 'high';
-    } else if (topRating.includes('true') || topRating.includes('verified')) {
-      finalLabel = 'likely_true';
-      headline = 'Verified factual event / claim';
-      meaning = `This claim matches a verified factual statement documented by ${top.publisher}.`;
-      finalScore = 92;
-      confidenceLevel = 'high';
-    }
   } else {
-    // Pure open-source NLP heuristics
+    // Pure open-source NLP heuristics (local registry never overrides verdict or sets confidence to high)
     if (finalLabel === 'likely_false') {
       headline = 'Likely false or sensational';
       meaning = 'This statement uses language typical of sensational rumors, clickbait, or urgent sharing pressure.';
@@ -165,8 +148,8 @@ module.exports = async function detectText(rawText) {
 
   if (matchedFactChecks.length > 0) {
     reasons.push({
-      tone: finalLabel === 'likely_false' ? 'bad' : 'good',
-      text: `Matches a verified review from ${matchedFactChecks[0].publisher} (Rating: "${matchedFactChecks[0].rating}").`
+      tone: 'info',
+      text: `Similar claim previously fact-checked: ${matchedFactChecks[0].publisher} reviewed a related claim (Rating: "${matchedFactChecks[0].rating}").`
     });
   }
 

@@ -71,5 +71,32 @@ describe('API Route Validation & Status Codes', () => {
     assert.strictEqual(res.status, 413);
     assert.strictEqual(res.body.error, 'file_too_large');
   });
+
+  test('CORS in production without ALLOWED_ORIGIN allows same-origin and rejects cross-origin', async () => {
+    const origEnv = process.env.NODE_ENV;
+    const origAllowed = process.env.ALLOWED_ORIGIN;
+    process.env.NODE_ENV = 'production';
+    delete process.env.ALLOWED_ORIGIN;
+
+    try {
+      // Same-origin request: Origin matches Host
+      const resSame = await request(app)
+        .get('/api/health')
+        .set('Host', 'satyalens.com')
+        .set('Origin', 'https://satyalens.com');
+      assert.strictEqual(resSame.status, 200);
+
+      // Cross-origin request: Origin differs from Host
+      const resCross = await request(app)
+        .get('/api/health')
+        .set('Host', 'satyalens.com')
+        .set('Origin', 'https://malicious-external-site.com');
+      assert.strictEqual(resCross.status, 403);
+      assert.strictEqual(resCross.body.error, 'cors_forbidden');
+    } finally {
+      process.env.NODE_ENV = origEnv;
+      if (origAllowed) process.env.ALLOWED_ORIGIN = origAllowed;
+    }
+  });
 });
 

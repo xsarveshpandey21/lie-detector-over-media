@@ -19,6 +19,9 @@ export interface SourceItem {
   claim: string;
   url: string;
   date: string;
+  verifiedOn?: string;
+  isLocalRegistry?: boolean;
+  similarityNote?: string;
 }
 
 export interface CheckItem {

@@ -33,13 +33,20 @@ export default function FactCheckCards({ sources }: FactCheckCardsProps) {
               key={idx}
               className="p-3.5 rounded-xl border border-line dark:border-brown-800 bg-cream/50 dark:bg-brown-800/60 space-y-2 text-xs"
             >
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="font-bold text-ink dark:text-cream">
                   {item.publisher}
                 </span>
-                <span className="px-2 py-0.5 rounded-md font-semibold text-[11px] bg-yellow-100 dark:bg-brown-700 text-brown-800 dark:text-yellow-200 border border-yellow-300/40">
-                  Rating: {item.rating}
-                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {item.isLocalRegistry && (
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-sand dark:bg-brown-900 text-muted dark:text-brown-300 border border-line dark:border-brown-700">
+                      Similar claim previously fact-checked
+                    </span>
+                  )}
+                  <span className="px-2 py-0.5 rounded-md font-semibold text-[11px] bg-yellow-100 dark:bg-brown-700 text-brown-800 dark:text-yellow-200 border border-yellow-300/40">
+                    Rating: {item.rating}
+                  </span>
+                </div>
               </div>
 
               <p className="text-muted dark:text-brown-200 italic line-clamp-2">
