@@ -140,7 +140,7 @@ module.exports = async function detectVideo(file) {
     references: [
       {
         id: 'ref-video-container',
-        publisher: 'Satya Lens Video Container Inspector',
+        publisher: 'Lie Detector Over Media Video Container Inspector',
         title: `Video Stream Validation: ${fileName}`,
         rating: 'Valid Video Container',
         ratingMeaning: `Verified video stream atoms for ${container} container.`,
@@ -168,7 +168,7 @@ module.exports = async function detectVideo(file) {
       externalDetectorUsed: Boolean(externalResult)
     },
     notices: [],
-    disclaimer: 'Satya Lens gives signals, not final proof. Always check with trusted sources.',
+    disclaimer: 'Lie Detector Over Media gives signals, not final proof. Always check with trusted sources.',
 
     // Deprecated compatibility aliases
     truthScore: score,

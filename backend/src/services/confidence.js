@@ -1,5 +1,5 @@
 /**
- * Satya Lens - Confidence Assessment Engine
+ * Lie Detector Over Media - Confidence Assessment Engine
  *
  * Confidence Rules:
  * - HIGH: Live fact-check match (same claim) OR semantic similarity + NLI both agree.

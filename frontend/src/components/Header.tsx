@@ -25,7 +25,7 @@ export default function Header({ language, onLanguageChange }: HeaderProps) {
           </svg>
           <div>
             <span className="text-xl font-bold font-heading text-ink dark:text-cream leading-tight block">
-              Satya Lens
+              Lie Detector Over Media
             </span>
             <span className="text-xs text-muted dark:text-brown-200 block">
               See what&apos;s real.

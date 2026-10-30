@@ -1,4 +1,4 @@
-# 🔍 Satya Lens
+# 🔍 Lie Detector Over Media
 
 <div align="center">
 
@@ -8,11 +8,12 @@ A simple web tool to help you check whether text, photos, video, audio, or websi
 
 [![CI](https://img.shields.io/badge/CI-Passing-brightgreen?logo=githubactions&logoColor=white)](#-quick-start)
 [![License: MIT](https://img.shields.io/badge/License-MIT-8B5E3C.svg)](https://opensource.org/licenses/MIT)
+[![Copyright](https://img.shields.io/badge/Copyright-Sarvesh%20Pandey-F6C453)](#-copyright--license)
 [![Node.js Version](https://img.shields.io/badge/Node.js-20%2B-F6C453?logo=node.js&logoColor=black)](https://nodejs.org)
 [![React](https://img.shields.io/badge/React-18-222222?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 
-[Features](#-what-works-right-now) • [Quick Start](#-quick-start) • [Environment Variables](#-environment-variables) • [Architecture](#-architecture--deployment) • [ML Notes](#-machine-learning-notes) • [Limitations & Privacy](#-limitations--privacy) • [Changelog](#-changelog)
+[Features](#-what-works-right-now) • [Quick Start](#-quick-start) • [Environment Variables](#-environment-variables) • [Architecture](#-architecture--deployment) • [ML Notes](#-machine-learning-notes) • [Limitations & Privacy](#-limitations--privacy) • [Copyright & License](#-copyright--license) • [Changelog](#-changelog)
 
 </div>
 
@@ -20,7 +21,7 @@ A simple web tool to help you check whether text, photos, video, audio, or websi
 
 ## 📌 What Works Right Now
 
-Satya Lens adheres to a strict honesty rule: **never fabricate results or claim certainty**. If an external AI model or API key is not configured, we provide honest `"not checked"` and `"not available"` transparency states with `score: null` rather than fake scores.
+Lie Detector Over Media adheres to a strict honesty rule: **never fabricate results or claim certainty**. If an external AI model or API key is not configured, we provide honest `"not checked"` and `"not available"` transparency states with `score: null` rather than fake scores.
 
 | Content Type | What We Check (No Keys) | What Gets Checked (With Keys) | What We CANNOT Do Yet |
 | :--- | :--- | :--- | :--- |
@@ -42,8 +43,8 @@ Satya Lens adheres to a strict honesty rule: **never fabricate results or claim 
 ### 1. Clone & Install Dependencies
 
 ```bash
-git clone <repository-url> satya-lens
-cd satya-lens
+git clone <repository-url> lie-detector-over-media
+cd lie-detector-over-media
 
 # Install root, backend, and frontend dependencies in one command
 npm run install:all
@@ -86,7 +87,7 @@ Copy `backend/.env.sample` to `backend/.env` if you wish to configure optional i
 cp backend/.env.sample backend/.env
 ```
 
-> **Note:** **None of these keys are required to run the app.** Satya Lens works out of the box with honest "not available" states.
+> **Note:** **None of these keys are required to run the app.** Lie Detector Over Media works out of the box with honest "not available" states.
 
 | Variable | Default | Purpose | Where to get one |
 | :--- | :--- | :--- | :--- |
@@ -162,13 +163,13 @@ The `/ml` directory provides an experimental text classification microservice ba
 - The training script logs class distributions and prints a warning if any class exceeds 70% of the dataset.
 
 > ⚠️ **Important Accuracy Warning:**  
-> Machine learning models trained on the LIAR dataset have historically low general-world accuracy (~60–65%) and cannot independently verify real-world facts. They learn linguistic style markers, not objective truth. Satya Lens treats ML outputs strictly as secondary heuristics and never presents them as definitive proof.
+> Machine learning models trained on the LIAR dataset have historically low general-world accuracy (~60–65%) and cannot independently verify real-world facts. They learn linguistic style markers, not objective truth. Lie Detector Over Media treats ML outputs strictly as secondary heuristics and never presents them as definitive proof.
 
 ---
 
 ## 🎯 Accuracy, Match Thresholds & Verified References
 
-Satya Lens enforces rigorous accuracy standards to prevent false positives and eliminate fabricated claims.
+Lie Detector Over Media enforces rigorous accuracy standards to prevent false positives and eliminate fabricated claims.
 
 ### 1. Matching Algorithm & Thresholds
 Local fact-check matching (`backend/src/services/claimMatcher.js`) follows strict mathematical criteria:
@@ -224,22 +225,30 @@ npm run verify:references
 
 ## 🛡️ Limitations & Privacy
 
-- **Signals, Not Final Proof**: Satya Lens provides signals and educational indicators, not final truth verdicts. Always verify important breaking news and medical or financial claims across multiple authoritative primary sources.
+- **Signals, Not Final Proof**: Lie Detector Over Media provides signals and educational indicators, not final truth verdicts. Always verify important breaking news and medical or financial claims across multiple authoritative primary sources.
 - **Zero Content Storage**: We do not store your text, links, or uploaded media. Files are processed in volatile server memory and discarded immediately upon response completion.
 - **Imperfect Detection**: AI models, domain heuristics, and metadata analysis can produce both false positives and false negatives. A missing EXIF header does not prove an image is AI-generated, and clean punctuation does not guarantee factual truth.
 
 ---
 
-## 📄 License & Contributing
+## 📄 Copyright & License
 
+**Author:** Sarvesh Pandey  
+**Copyright:** © 2026 Sarvesh Pandey. All rights reserved.  
 Distributed under the **MIT License**. Contributions, bug reports, and pull requests are welcome!
 
 ---
 
 ## 📜 Changelog
 
-### v2.0.0 (Satya Lens Major Overhaul)
-- **Product Rebranding**: Completely rebranded from *TruthLens AI* to **Satya Lens** ("See what's real.") across UI, backend, documentation, package slugs, and logos.
+### v2.1.0 (Lie Detector Over Media Rebranding & Ownership)
+- **Product Rebranding**: Rebranded to **Lie Detector Over Media** ("See what's real.") across UI, backend, tests, documentation, and package manifests.
+- **Copyright Attribution**: Assigned all copyright and author attribution to **Sarvesh Pandey** across project metadata, license, UI footer, and documentation.
+
+### v2.0.0 (Core Engine & Accuracy Overhaul)
+- **Product Architecture**: Full-stack modular verification across text, image, video, audio, and URL inputs.
+- **Accurate Claim Matching**: Implemented strict multi-phrase matching algorithm with debunking-statement rejection and 0% false-positive rate on harmless statements.
+- **Verified References**: Added live automated verification (`verify:references`) validating fact-check references with status 200 checks.
 - **Removal of Fabricated Metrics**:
   - Deleted hash-seeded fake ELA error metrics and simulated image/audio manipulation percentages.
   - Replaced circular credibility calculation (`truthScore * 0.9 + 5`) with real signal aggregation (returns `null` when no real signal exists).

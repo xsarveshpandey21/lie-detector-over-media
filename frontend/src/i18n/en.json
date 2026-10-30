@@ -1,5 +1,5 @@
 {
-  "appTitle": "Satya Lens",
+  "appTitle": "Lie Detector Over Media",
   "tagline": "See what's real.",
   "heroTitle": "Check if something online is real — in 3 easy steps.",
   "steps": {
@@ -78,18 +78,19 @@
     "notChecked": "Fact-check search is not set up in this version.",
     "noMatches": "We did not find a published fact-check for this. That does not mean it is true or false."
   },
-  "disclaimer": "Satya Lens gives signals, not final proof. Always check with trusted sources.",
+  "disclaimer": "Lie Detector Over Media gives signals, not final proof. Always check with trusted sources.",
   "privacyNote": "We do not store what you check. Files are held in memory during analysis and never saved to disk.",
   "stepBadge1": "Step 1 of 3",
   "stepBadge3": "Step 3 of 3",
   "footer": {
-    "title": "Satya Lens • See what's real.",
+    "title": "Lie Detector Over Media • See what's real.",
     "tagline": "An open educational tool providing signals to help you judge content reliability. Never a substitute for critical thinking.",
+    "copyright": "© 2026 Sarvesh Pandey. All rights reserved.",
     "privacy": "Privacy: Zero-Storage in Memory",
     "github": "GitHub"
   },
   "emptyState": {
-    "howItWorks": "How Satya Lens works",
+    "howItWorks": "How Lie Detector Over Media works",
     "card1Title": "1. Add your content",
     "card1Desc": "Paste a claim, drop a photo or recording, or enter a web link.",
     "card2Title": "2. We check signals",

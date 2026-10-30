@@ -162,7 +162,7 @@ module.exports = async function detectText(rawText) {
   if (metrics.sensationalHits > 0 || metrics.urgencyHits > 0 || metrics.objectiveHits > 0) {
     references.push({
       id: 'ref-style-nlp',
-      publisher: 'Satya Lens Linguistic Engine',
+      publisher: 'Lie Detector Over Media Linguistic Engine',
       title: 'Stylistic & Structural Pattern Analysis',
       rating: metrics.clickbaitScore >= 0.35 ? 'Sensational Markers Detected' : 'Objective Attribution Markers',
       ratingMeaning: metrics.clickbaitScore >= 0.35
@@ -316,7 +316,7 @@ module.exports = async function detectText(rawText) {
       nlpEngine: llm ? llm.source : 'Open-Source Statistical & Rule-Based NLP Engine'
     },
     notices: [],
-    disclaimer: 'Satya Lens gives signals, not final proof. Always check with trusted sources.',
+    disclaimer: 'Lie Detector Over Media gives signals, not final proof. Always check with trusted sources.',
 
     // Deprecated compatibility aliases
     truthScore: finalScore,

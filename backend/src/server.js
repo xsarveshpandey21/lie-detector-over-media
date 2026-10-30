@@ -3,5 +3,5 @@ const app = require('./app');
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
-  console.log(`Satya Lens server running at http://localhost:${port}`);
+  console.log(`Lie Detector Over Media server running at http://localhost:${port}`);
 });

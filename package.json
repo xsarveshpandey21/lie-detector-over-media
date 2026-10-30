@@ -1,7 +1,9 @@
 {
-  "name": "satya-lens",
+  "name": "lie-detector-over-media",
   "version": "1.0.0",
-  "description": "Satya Lens - check if content is reliable",
+  "description": "Lie Detector Over Media - check if content is reliable",
+  "author": "Sarvesh Pandey",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "build": "cd frontend && npm install && npm run build",

@@ -95,7 +95,9 @@ app.use(express.urlencoded({ extended: true, limit: `${maxUploadMB + 1}mb` }));
 app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
-    name: 'Satya Lens',
+    name: 'Lie Detector Over Media',
+    author: 'Sarvesh Pandey',
+    copyright: 'Copyright (c) 2026 Sarvesh Pandey. All rights reserved.',
     status: 'operational',
     version: '1.0.0',
     time: new Date().toISOString(),
@@ -156,7 +158,7 @@ app.use((err, req, res, next) => {
     });
   }
 
-  console.error('[Satya Lens Server Error]:', err.message || err);
+  console.error('[Lie Detector Over Media Server Error]:', err.message || err);
   return res.status(500).json({
     error: 'server_error',
     message: 'Something went wrong while checking this content. Please try again.'

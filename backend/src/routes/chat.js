@@ -40,7 +40,7 @@ function generateLocalAnswer(question, report) {
     if (verdict.label === 'likely_false') {
       return '⚠️ We recommend NOT forwarding or sharing this message. It shows clear markers of misinformation or clickbait. Here are recommended next steps:\n\n• ' + nextSteps.join('\n• ');
     } else if (verdict.label === 'likely_true') {
-      return 'While this content appears structured and reliable, Satya Lens gives signals rather than absolute proof. Verify with primary sources before sharing:\n\n• ' + nextSteps.join('\n• ');
+      return 'While this content appears structured and reliable, Lie Detector Over Media gives signals rather than absolute proof. Verify with primary sources before sharing:\n\n• ' + nextSteps.join('\n• ');
     } else {
       return 'We could not definitively verify this content. Do not forward unverified claims. Follow these steps:\n\n• ' + nextSteps.join('\n• ');
     }
@@ -97,7 +97,7 @@ router.post('/', async (req, res) => {
           messages: [
             {
               role: 'system',
-              content: `You are the Satya Lens Assistant. You answer questions strictly based on the current verification report provided below in simple, plain English. Never invent or hallucinate facts.
+              content: `You are the Lie Detector Over Media Assistant. You answer questions strictly based on the current verification report provided below in simple, plain English. Never invent or hallucinate facts.
 Current Report:
 ${reportContext}`
             },

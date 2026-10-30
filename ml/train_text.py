@@ -57,7 +57,7 @@ def compute_metrics(eval_pred):
     return {"accuracy": acc, "f1_macro": f1_macro, "precision": prec, "recall": rec}
 
 def main():
-    parser = argparse.ArgumentParser(description="Train Satya Lens 3-class text model on LIAR dataset")
+    parser = argparse.ArgumentParser(description="Train Lie Detector Over Media 3-class text model on LIAR dataset")
     parser.add_argument('--model_name', default='distilbert-base-uncased')
     parser.add_argument('--epochs', type=int, default=3)
     parser.add_argument('--batch_size', type=int, default=16)

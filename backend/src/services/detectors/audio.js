@@ -139,7 +139,7 @@ module.exports = async function detectAudio(file) {
     references: [
       {
         id: 'ref-audio-metadata',
-        publisher: 'Satya Lens Audio Stream Inspector',
+        publisher: 'Lie Detector Over Media Audio Stream Inspector',
         title: `Audio Stream Metadata: ${fileName}`,
         rating: 'Audio Stream Analyzed',
         ratingMeaning: `Container ${container || 'standard'} with codec ${codec || 'audio stream'}.`,
@@ -170,7 +170,7 @@ module.exports = async function detectAudio(file) {
       externalDetectorUsed: Boolean(externalResult)
     },
     notices: [],
-    disclaimer: 'Satya Lens gives signals, not final proof. Always check with trusted sources.',
+    disclaimer: 'Lie Detector Over Media gives signals, not final proof. Always check with trusted sources.',
 
     // Deprecated compatibility aliases
     truthScore: score,

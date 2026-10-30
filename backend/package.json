@@ -1,6 +1,9 @@
 {
-  "name": "satya-lens-backend",
+  "name": "lie-detector-over-media-backend",
   "version": "0.1.0",
+  "description": "Lie Detector Over Media - Backend Service",
+  "author": "Sarvesh Pandey",
+  "license": "MIT",
   "private": true,
   "main": "src/server.js",
   "type": "commonjs",

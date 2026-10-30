@@ -8,7 +8,8 @@ describe('API Route Validation & Status Codes', () => {
     const res = await request(app).get('/api/health');
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.body.ok, true);
-    assert.strictEqual(res.body.name, 'Satya Lens');
+    assert.strictEqual(res.body.name, 'Lie Detector Over Media');
+    assert.strictEqual(res.body.author, 'Sarvesh Pandey');
     assert.strictEqual(typeof res.body.integrations.factCheckApi, 'boolean');
   });
 
@@ -82,14 +83,14 @@ describe('API Route Validation & Status Codes', () => {
       // Same-origin request: Origin matches Host
       const resSame = await request(app)
         .get('/api/health')
-        .set('Host', 'satyalens.com')
-        .set('Origin', 'https://satyalens.com');
+        .set('Host', 'liedetectorovermedia.com')
+        .set('Origin', 'https://liedetectorovermedia.com');
       assert.strictEqual(resSame.status, 200);
 
       // Cross-origin request: Origin differs from Host
       const resCross = await request(app)
         .get('/api/health')
-        .set('Host', 'satyalens.com')
+        .set('Host', 'liedetectorovermedia.com')
         .set('Origin', 'https://malicious-external-site.com');
       assert.strictEqual(resCross.status, 403);
       assert.strictEqual(resCross.body.error, 'cors_forbidden');

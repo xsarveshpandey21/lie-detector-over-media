@@ -15,7 +15,7 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 # Select local fine-tuned model directory if present, else fallback open-source HF model
 model_path = MODEL_DIR if os.path.exists(MODEL_DIR) else FALLBACK_MODEL
 
-app = FastAPI(title='Satya Lens Text Model')
+app = FastAPI(title='Lie Detector Over Media Text Model')
 
 class PredictIn(BaseModel):
     text: str

@@ -24,7 +24,7 @@ export default function ReportActions({
 
   async function handleCopy() {
     const lines = [
-      `Satya Lens Report — See what's real`,
+      `Lie Detector Over Media Report — See what's real`,
       `------------------------------------`,
       `Verdict: ${report.verdict.headline}`,
       `Meaning: ${report.verdict.meaning}`,
@@ -38,7 +38,7 @@ export default function ReportActions({
       ...report.nextSteps.map(s => `- ${s}`),
       ``,
       `Disclaimer: ${report.disclaimer}`,
-      `Checked with Satya Lens (https://satya-lens.vercel.app)`
+      `Checked with Lie Detector Over Media`
     ];
 
     try {

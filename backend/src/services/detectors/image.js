@@ -214,7 +214,7 @@ module.exports = async function detectImage(file) {
   const references = [
     {
       id: 'ref-image-exif',
-      publisher: 'Satya Lens Metadata & Container Inspector',
+      publisher: 'Lie Detector Over Media Metadata & Container Inspector',
       title: `File Metadata: ${fileName}`,
       rating: cameraMake ? 'Camera Hardware Recorded' : 'Standard Web File',
       ratingMeaning: cameraMake
@@ -284,7 +284,7 @@ module.exports = async function detectImage(file) {
       externalDetectorUsed: Boolean(externalResult)
     },
     notices: [],
-    disclaimer: 'Satya Lens gives signals, not final proof. Always check with trusted sources.',
+    disclaimer: 'Lie Detector Over Media gives signals, not final proof. Always check with trusted sources.',
 
     // Deprecated compatibility aliases
     truthScore: score,

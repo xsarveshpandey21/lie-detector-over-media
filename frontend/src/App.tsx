@@ -189,6 +189,9 @@ export default function App() {
         <p className="max-w-md mx-auto">
           {t.footer.tagline}
         </p>
+        <p className="text-xs text-muted dark:text-brown-300 font-medium">
+          {t.footer.copyright}
+        </p>
         <div className="flex items-center justify-center gap-4 pt-1">
           {import.meta.env.VITE_GITHUB_URL && (
             <>

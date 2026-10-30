@@ -1,5 +1,5 @@
 /**
- * Satya Lens - Accurate Shared Claim Matcher
+ * Lie Detector Over Media - Accurate Shared Claim Matcher
  *
  * Implements strict multi-phrase matching against verified fact-check registries.
  * Guarantees zero false positives on benign or debunking statements.

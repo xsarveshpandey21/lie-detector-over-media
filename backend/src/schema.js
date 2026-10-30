@@ -1,5 +1,5 @@
 /**
- * Satya Lens - Core API Data Types & Schema
+ * Lie Detector Over Media - Core API Data Types & Schema
  *
  * @typedef {'text'|'image'|'video'|'audio'|'url'} ContentType
  * @typedef {'likely_true'|'likely_false'|'uncertain'} VerdictLabel

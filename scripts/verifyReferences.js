@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Satya Lens - Fact-Check Reference Verification Script
+ * Lie Detector Over Media - Fact-Check Reference Verification Script
  *
  * HTTP-checks every URL in backend/src/data/factChecks.json:
  * - Follows redirects (up to 5)
@@ -35,7 +35,7 @@ async function verifyRegistry(options = {}) {
 
   if (!silent) {
     console.log(`\n======================================================`);
-    console.log(`Satya Lens - Verifying ${entries.length} Fact-Check References`);
+    console.log(`Lie Detector Over Media - Verifying ${entries.length} Fact-Check References`);
     console.log(`======================================================\n`);
   }
 

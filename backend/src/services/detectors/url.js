@@ -64,7 +64,7 @@ async function checkSafeBrowsing(url) {
   try {
     const endpoint = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${key}`;
     const payload = {
-      client: { clientId: 'satya-lens', clientVersion: '1.0.0' },
+      client: { clientId: 'lie-detector-over-media', clientVersion: '1.0.0' },
       threatInfo: {
         threatTypes: ['MALWARE', 'SOCIAL_ENGINEERING', 'UNWANTED_SOFTWARE'],
         platformTypes: ['ANY_PLATFORM'],
@@ -335,7 +335,7 @@ module.exports = async function detectUrl(rawUrl) {
       lookalikeTarget: lookalikeCheck.target || null
     },
     notices: [],
-    disclaimer: 'Satya Lens gives signals, not final proof. Always check with trusted sources.',
+    disclaimer: 'Lie Detector Over Media gives signals, not final proof. Always check with trusted sources.',
 
     // Deprecated compatibility aliases
     truthScore: score,

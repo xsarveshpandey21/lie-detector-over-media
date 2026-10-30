@@ -80,7 +80,7 @@ export default function Chatbot({ report }: ChatbotProps) {
                   }`}
                 >
                   <span className="font-bold block text-[10px] text-muted mb-0.5">
-                    {m.role === 'user' ? 'You' : 'Satya Lens Assistant'}
+                    {m.role === 'user' ? 'You' : 'Lie Detector Over Media Assistant'}
                   </span>
                   {m.text}
                 </div>

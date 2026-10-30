@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 
-// Migrate legacy 'theme' key to 'satyalens:theme' once
+// Migrate legacy theme keys to 'liedetector:theme' once
 if (typeof window !== 'undefined') {
-  const legacy = localStorage.getItem('theme');
-  if (legacy && !localStorage.getItem('satyalens:theme')) {
-    localStorage.setItem('satyalens:theme', legacy);
+  const legacy = localStorage.getItem('satyalens:theme') || localStorage.getItem('theme');
+  if (legacy && !localStorage.getItem('liedetector:theme')) {
+    localStorage.setItem('liedetector:theme', legacy);
   }
 }
 
 export default function ThemeToggle() {
   const [dark, setDark] = useState<boolean>(() => {
-    const saved = localStorage.getItem('satyalens:theme');
+    const saved = localStorage.getItem('liedetector:theme');
     if (saved) return saved === 'dark';
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
@@ -19,10 +19,10 @@ export default function ThemeToggle() {
     const root = document.documentElement;
     if (dark) {
       root.classList.add('dark');
-      localStorage.setItem('satyalens:theme', 'dark');
+      localStorage.setItem('liedetector:theme', 'dark');
     } else {
       root.classList.remove('dark');
-      localStorage.setItem('satyalens:theme', 'light');
+      localStorage.setItem('liedetector:theme', 'light');
     }
   }, [dark]);
 

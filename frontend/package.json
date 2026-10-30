@@ -1,6 +1,9 @@
 {
-  "name": "satya-lens-frontend",
+  "name": "lie-detector-over-media-frontend",
   "version": "0.1.0",
+  "description": "Lie Detector Over Media - Frontend Client",
+  "author": "Sarvesh Pandey",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
