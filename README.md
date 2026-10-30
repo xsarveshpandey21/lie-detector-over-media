@@ -223,6 +223,18 @@ npm run verify:references
 
 ---
 
+## 📋 Software Requirements Specification (SRS) PDF
+
+A comprehensive Software Requirements Specification document is generated and maintained in the root directory:
+- **PDF Document**: [`Lie_Detector_Over_Media_Requirements.pdf`](Lie_Detector_Over_Media_Requirements.pdf)
+- **Regenerate PDF**:
+  ```bash
+  npm run generate:requirements-pdf
+  ```
+The SRS includes complete functional requirements across all 5 media modalities, false-positive elimination rules, data contracts, security guidelines, and verified test acceptance matrices.
+
+---
+
 ## 🛡️ Limitations & Privacy
 
 - **Signals, Not Final Proof**: Lie Detector Over Media provides signals and educational indicators, not final truth verdicts. Always verify important breaking news and medical or financial claims across multiple authoritative primary sources.
