@@ -43,7 +43,7 @@ Lie Detector Over Media adheres to a strict honesty rule: **never fabricate resu
 ### 1. Clone & Install Dependencies
 
 ```bash
-git clone <repository-url> lie-detector-over-media
+git clone https://github.com/xsarveshpandey21/lie-detector-over-media.git
 cd lie-detector-over-media
 
 # Install root, backend, and frontend dependencies in one command
