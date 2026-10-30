@@ -73,3 +73,4 @@ if (hasError) {
 } else {
   console.log('✔ All theme color shades verified successfully.');
 }
+

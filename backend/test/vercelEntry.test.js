@@ -8,3 +8,4 @@ describe('Vercel Serverless Entrypoint (api/index.js)', () => {
     assert.strictEqual(typeof apiApp.handle, 'function', 'Exported object must be a valid Express app');
   });
 });
+

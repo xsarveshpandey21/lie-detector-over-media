@@ -13,7 +13,7 @@ async function classifyWithMicroservice(text) {
     const { data } = await axios.post(
       `${base.replace(/\/$/, '')}/predict`,
       { text },
-      { timeout: 1200 }
+      { timeout: 4500 }
     );
     if (!data) return null;
     const raw = data.label;

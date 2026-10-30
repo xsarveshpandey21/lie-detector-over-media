@@ -60,3 +60,4 @@ module.exports = {
   matchLocalFactChecks,
   DEBUNKING_PATTERNS
 };
+
